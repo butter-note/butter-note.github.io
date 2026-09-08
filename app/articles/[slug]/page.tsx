@@ -50,7 +50,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <SiteHeader />
       <article className="article-page">
         <header className="article-header site-container">
-          <a className="article-back" href="/articles"><ArrowLeft aria-hidden="true" size={17} /> 아티클로 돌아가기</a>
+          <a className="article-back" href="/articles"><ArrowLeft aria-hidden="true" size={17} /> 노션 가이드(아티클)로 돌아가기</a>
           <span className="category-pill active">{post.category}</span>
           <h1>{post.title}</h1>
           <p>{post.description}</p>

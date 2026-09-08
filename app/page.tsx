@@ -30,10 +30,10 @@ export default function Home() {
             </p>
             <p className="hand-note">처음이어도 괜찮아요. 버터노트가 함께할게요!</p>
             <div className="hero-actions">
-              <a className="button" href="#guides">
+              <a className="button" href="/articles">
                 노션 가이드 보기 <ArrowRight aria-hidden="true" size={18} />
               </a>
-              <a className="button button-secondary" href="#contact">
+              <a className="button button-secondary" href="/services">
                 교육·구축 상담하기
               </a>
             </div>
@@ -82,14 +82,14 @@ export default function Home() {
               <h2>처음이라면, 여기부터</h2>
               <p>노션의 낯선 기능을 실제 업무의 언어로 설명합니다.</p>
             </div>
-            <a className="arrow-link" href="#guides">
+            <a className="arrow-link" href="/articles">
               모든 글 보기 <ArrowRight aria-hidden="true" size={17} />
             </a>
           </div>
 
           <div className="article-grid">
             {articles.map((article) => (
-              <a className="article-card" href={`/guides/${article.slug}`} key={article.title}>
+              <a className="article-card" href={`/articles/${article.slug}`} key={article.title}>
                 <div className="article-topline">
                   <span className="category-pill">{article.category}</span>
                   <img src={article.character} alt="" aria-hidden="true" />

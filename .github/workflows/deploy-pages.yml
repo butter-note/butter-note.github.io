@@ -29,6 +29,18 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: npm ci
+      - name: Sync Notion articles
+        if: ${{ secrets.NOTION_API_KEY != '' && secrets.NOTION_DATA_SOURCE_ID != '' }}
+        env:
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
+        run: npm run sync:notion
+      - name: Sync Notion templates
+        if: ${{ secrets.NOTION_API_KEY != '' && secrets.NOTION_TEMPLATES_DATA_SOURCE_ID != '' }}
+        env:
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_TEMPLATES_DATA_SOURCE_ID: ${{ secrets.NOTION_TEMPLATES_DATA_SOURCE_ID }}
+        run: npm run sync:notion:templates
       - name: Build static site
         run: npm run build
       - name: Disable Jekyll processing
