@@ -11,27 +11,22 @@ export type PostMeta = {
 
 export type Post = PostMeta & { content: string };
 
-const markdownModules = import.meta.glob('../content/posts/*.md', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-}) as Record<string, string>;
-
-const metaModules = import.meta.glob('../content/posts/*.json', {
-  import: 'default',
-  eager: true,
-}) as Record<string, PostMeta>;
+const postsDirectory = path.join(process.cwd(), 'content', 'posts');
 
 export function getPosts(): Post[] {
-  return Object.entries(markdownModules)
-    .map(([path, content]) => {
-      const metaPath = path.replace(/\.md$/, '.json');
-      const meta = metaModules[metaPath];
+  return fs
+    .readdirSync(postsDirectory)
+    .filter((fileName) => fileName.endsWith('.md'))
+    .map((fileName) => {
+      const slug = fileName.replace(/\.md$/, '');
+      const content = fs.readFileSync(path.join(postsDirectory, fileName), 'utf8');
+      const metaPath = path.join(postsDirectory, `${slug}.json`);
 
-      if (!meta) {
+      if (!fs.existsSync(metaPath)) {
         throw new Error(`게시물 메타데이터가 없습니다: ${metaPath}`);
       }
 
+      const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8')) as PostMeta;
       return { ...meta, content };
     })
     .sort((a, b) => b.date.localeCompare(a.date));
@@ -40,3 +35,5 @@ export function getPosts(): Post[] {
 export function getPostBySlug(slug: string): Post | undefined {
   return getPosts().find((post) => post.slug === slug);
 }
+import fs from 'node:fs';
+import path from 'node:path';

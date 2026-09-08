@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
+import { GoogleAnalytics } from '@/components/google-analytics';
 import './globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://butter-note.workspace-991214.chatgpt.site'),
+  metadataBase: new URL('https://butter-note.github.io'),
   title: '버터노트 | 노션 교육과 시스템 구축',
   description: '노션이 처음인 팀도 부드럽게 적응하도록 돕는 교육과 시스템 구축 스튜디오, 버터노트입니다.',
   openGraph: {
@@ -23,7 +24,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        {children}
+        <GoogleAnalytics />
+      </body>
     </html>
   );
 }

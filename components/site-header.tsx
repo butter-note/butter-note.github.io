@@ -9,6 +9,7 @@ export function SiteHeader() {
         </a>
         <nav className="desktop-nav" aria-label="주요 메뉴">
           <a href="/#about">버터노트 소개</a>
+          <a href="/articles">아티클</a>
           <a href="/guides">노션 가이드</a>
           <a href="/#process">교육·구축</a>
         </nav>
@@ -19,6 +20,7 @@ export function SiteHeader() {
             <summary aria-label="메뉴 열기"><Menu aria-hidden="true" size={21} /></summary>
             <nav aria-label="모바일 메뉴">
               <a href="/#about">버터노트 소개</a>
+              <a href="/articles">아티클</a>
               <a href="/guides">노션 가이드</a>
               <a href="/#process">교육·구축</a>
               <a href="mailto:butternote.notion@gmail.com">이메일 문의</a>
