@@ -40,4 +40,6 @@ npm run sync:notion:templates
 
 노션 연결에는 읽기 권한이 필요하며, 대상 데이터베이스를 해당 연결과 공유해야 합니다.
 
-GitHub 저장소의 Actions secrets에 `NOTION_API_KEY`, `NOTION_DATA_SOURCE_ID`, `NOTION_TEMPLATES_DATA_SOURCE_ID`를 등록하면 배포할 때마다 최신 노션 데이터가 자동으로 반영됩니다. 노션에서만 내용을 바꾼 경우에는 GitHub의 **Actions → Deploy to GitHub Pages → Run workflow**로 수동 배포할 수 있습니다.
+GitHub 저장소의 Actions secrets에 `NOTION_API_KEY`, `NOTION_DATA_SOURCE_ID`, `NOTION_TEMPLATES_DATA_SOURCE_ID`, `NOTION_SALES_DATA_SOURCE_ID`를 등록하면 배포할 때마다 최신 노션 데이터가 자동으로 반영됩니다. 노션에서만 내용을 바꾼 경우에는 GitHub의 **Actions → Deploy to GitHub Pages → Run workflow**로 수동 배포할 수 있습니다.
+
+템플릿의 `판매 링크` 관계와 판매 링크 데이터베이스의 `템플릿` 관계를 연결하면 하나의 템플릿 카드에 Notion Marketplace, CTEE 등 여러 판매처가 표시됩니다.

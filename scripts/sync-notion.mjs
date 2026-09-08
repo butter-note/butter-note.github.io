@@ -44,6 +44,17 @@ function slugify(value, fallback) {
   return slug || fallback.replaceAll('-', '').slice(0, 12);
 }
 
+function slugFromValue(value, fallback) {
+  if (!value) return slugify('', fallback);
+  try {
+    const url = new URL(value);
+    const pathSlug = url.pathname.split('/').filter(Boolean).at(-1) ?? '';
+    return slugify(pathSlug, fallback);
+  } catch {
+    return slugify(value, fallback);
+  }
+}
+
 function characterFor(category) {
   if (category.includes('협업')) return '/brand/characters/cheerful.png';
   if (category.includes('템플릿')) return '/brand/characters/paper.png';
@@ -104,7 +115,8 @@ for (const page of pages) {
 
   const properties = page.properties ?? {};
   const title = richText(properties.이름 ?? properties.Name ?? properties.제목 ?? properties.Title) || '제목 없는 글';
-  const slug = slugify(richText(properties.Slug ?? properties.slug), page.id);
+  const slugValue = richText(properties.Slug ?? properties.slug) || properties.URL?.url || '';
+  const slug = slugFromValue(slugValue, page.id);
   const category = selectName(properties.카테고리 ?? properties.Category) || '노션 가이드';
   const description = richText(properties.요약 ?? properties.Description) || title;
   const date = dateValue(properties.발행일 ?? properties.Date, page.created_time);
@@ -122,6 +134,8 @@ for (const page of pages) {
     featured: Boolean(properties.추천?.checkbox ?? properties.Featured?.checkbox),
     notionPageId: page.id,
     notionUrl: page.url,
+    seoTitle: richText(properties['SEO 제목'] ?? properties.SeoTitle) || undefined,
+    seoDescription: richText(properties['SEO 설명'] ?? properties.SeoDescription) || undefined,
   };
 
   await writeFile(path.join(contentDir, `${slug}.md`), `${content.trim()}\n`, 'utf8');

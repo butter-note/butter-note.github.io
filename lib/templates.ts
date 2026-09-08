@@ -1,17 +1,30 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-export type TemplateItem = {
+export type SalesListing = {
   id: string;
-  name: string;
-  description: string;
   marketplace: string;
   url: string;
-  cover: string;
-  price: string;
   status: string;
+  price: number | null;
+  priceLabel: string;
+  buttonLabel: string;
+  order: number;
+};
+
+export type TemplateItem = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  cover: string;
+  status: string;
+  category: string;
+  version: string;
+  updatedAt: string;
   order: number;
   featured: boolean;
+  listings: SalesListing[];
 };
 
 export function getTemplates(): TemplateItem[] {

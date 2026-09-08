@@ -7,6 +7,8 @@ export type PostMeta = {
   readTime: string;
   character: string;
   featured?: boolean;
+  seoTitle?: string;
+  seoDescription?: string;
 };
 
 export type Post = PostMeta & { content: string };

@@ -1,38 +1,77 @@
 [
   {
     "id": "team-wiki-starter",
+    "slug": "team-wiki-starter",
     "name": "팀 위키 스타터",
     "description": "처음 노션을 도입하는 팀을 위한 정보 구조와 운영 규칙을 담은 시작 템플릿입니다.",
-    "marketplace": "Notion Marketplace",
-    "url": "",
     "cover": "/brand/characters/paper.png",
-    "price": "출시 준비 중",
-    "status": "준비중",
+    "status": "준비 중",
+    "category": "팀 위키",
+    "version": "",
+    "updatedAt": "",
     "order": 1,
-    "featured": true
+    "featured": true,
+    "listings": [
+      {
+        "id": "team-wiki-notion",
+        "marketplace": "Notion Marketplace",
+        "url": "",
+        "status": "준비 중",
+        "price": null,
+        "priceLabel": "출시 준비 중",
+        "buttonLabel": "출시 준비 중",
+        "order": 1
+      }
+    ]
   },
   {
     "id": "meeting-action-system",
+    "slug": "meeting-action-system",
     "name": "회의록 → 실행 과제 시스템",
     "description": "회의에서 나온 결정과 담당 업무가 흩어지지 않도록 연결하는 실무형 템플릿입니다.",
-    "marketplace": "CTEE",
-    "url": "",
     "cover": "/brand/characters/sparkle.png",
-    "price": "출시 준비 중",
-    "status": "준비중",
+    "status": "준비 중",
+    "category": "팀 협업",
+    "version": "",
+    "updatedAt": "",
     "order": 2,
-    "featured": false
+    "featured": false,
+    "listings": [
+      {
+        "id": "meeting-action-ctee",
+        "marketplace": "CTEE",
+        "url": "",
+        "status": "준비 중",
+        "price": null,
+        "priceLabel": "출시 준비 중",
+        "buttonLabel": "출시 준비 중",
+        "order": 1
+      }
+    ]
   },
   {
     "id": "notion-first-checklist",
+    "slug": "notion-first-checklist",
     "name": "노션 첫걸음 체크리스트",
     "description": "노션을 처음 시작할 때 꼭 확인할 내용을 한 장으로 정리한 무료 가이드입니다.",
-    "marketplace": "버터노트",
-    "url": "/articles/notion-first-steps/",
     "cover": "/brand/characters/question.png",
-    "price": "무료",
-    "status": "공개",
+    "status": "무료",
+    "category": "노션 첫걸음",
+    "version": "1.0",
+    "updatedAt": "",
     "order": 3,
-    "featured": false
+    "featured": false,
+    "listings": [
+      {
+        "id": "notion-first-butter-note",
+        "marketplace": "버터노트",
+        "url": "/articles/notion-first-steps/",
+        "status": "판매 중",
+        "price": 0,
+        "priceLabel": "무료",
+        "buttonLabel": "무료로 보기",
+        "order": 1
+      }
+    ]
   }
 ]

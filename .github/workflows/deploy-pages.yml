@@ -43,8 +43,9 @@ jobs:
         env:
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           NOTION_TEMPLATES_DATA_SOURCE_ID: ${{ secrets.NOTION_TEMPLATES_DATA_SOURCE_ID }}
+          NOTION_SALES_DATA_SOURCE_ID: ${{ secrets.NOTION_SALES_DATA_SOURCE_ID }}
         run: |
-          if [ -n "$NOTION_API_KEY" ] && [ -n "$NOTION_TEMPLATES_DATA_SOURCE_ID" ]; then
+          if [ -n "$NOTION_API_KEY" ] && [ -n "$NOTION_TEMPLATES_DATA_SOURCE_ID" ] && [ -n "$NOTION_SALES_DATA_SOURCE_ID" ]; then
             npm run sync:notion:templates
           else
             echo "Notion template sync skipped: secrets are not configured."
