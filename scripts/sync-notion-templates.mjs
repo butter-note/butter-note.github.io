@@ -9,9 +9,14 @@ function envValue(name) {
     : value;
 }
 
+function dataSourceId(name) {
+  const value = envValue(name);
+  return value.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i)?.[0] ?? value;
+}
+
 const API_KEY = envValue('NOTION_API_KEY');
-const TEMPLATES_DATA_SOURCE_ID = envValue('NOTION_TEMPLATES_DATA_SOURCE_ID');
-const SALES_DATA_SOURCE_ID = envValue('NOTION_SALES_DATA_SOURCE_ID');
+const TEMPLATES_DATA_SOURCE_ID = dataSourceId('NOTION_TEMPLATES_DATA_SOURCE_ID');
+const SALES_DATA_SOURCE_ID = dataSourceId('NOTION_SALES_DATA_SOURCE_ID');
 const NOTION_VERSION = '2026-03-11';
 
 if (!API_KEY || !TEMPLATES_DATA_SOURCE_ID || !SALES_DATA_SOURCE_ID) {
