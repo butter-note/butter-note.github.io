@@ -58,7 +58,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           <div className="article-detail-meta">{post.date.replaceAll('-', '. ')} · {post.readTime} 읽기</div>
         </header>
         <div className="article-body site-container">
-          <NotionMarkdown content={post.content} title={post.title} />
+          <NotionMarkdown content={post.content} title={post.title} flavor={post.format ?? (post.notionPageId ? 'notion' : 'markdown')} />
         </div>
       </article>
       <section className="article-contact">

@@ -9,6 +9,8 @@ export type PostMeta = {
   featured?: boolean;
   seoTitle?: string;
   seoDescription?: string;
+  notionPageId?: string;
+  format?: 'notion' | 'markdown';
 };
 
 export type Post = PostMeta & { content: string };

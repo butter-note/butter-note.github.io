@@ -99,12 +99,16 @@ async function queryPublishedPages() {
 const pages = await queryPublishedPages();
 const contentDir = path.resolve('content', 'posts');
 await mkdir(contentDir, { recursive: true });
+const originalsDir = path.resolve('content', 'notion-originals');
+await mkdir(originalsDir, { recursive: true });
 
 for (const page of pages) {
   const markdownResult = await notionRequest(`/v1/pages/${page.id}/markdown`);
   if (markdownResult.truncated || markdownResult.unknown_block_ids?.length) {
     throw new Error(`완전히 읽지 못한 노션 블록이 있습니다: ${page.url}`);
   }
+  // Keep the exact response, separate from presentation-only asset URL localization.
+  await writeFile(path.join(originalsDir, `${page.id.replaceAll('-', '')}.md`), markdownResult.markdown, 'utf8');
 
   const properties = page.properties ?? {};
   const title = richText(properties.이름 ?? properties.Name ?? properties.제목 ?? properties.Title) || '제목 없는 글';
@@ -117,6 +121,7 @@ for (const page of pages) {
   const words = content.replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length;
 
   const meta = {
+    format: 'notion',
     slug,
     title,
     description,

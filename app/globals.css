@@ -2,6 +2,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
+@import 'katex/dist/katex.min.css';
 
 @font-face {
   font-family: 'Cafe24 Ohsquare';
@@ -165,6 +166,9 @@ img { max-width: 100%; }
 .notion-markdown h1 { margin: 1.8em 0 .75em; font-family: var(--font-display); font-size: 34px; line-height: 1.35; letter-spacing: -.04em; font-weight: 400; }
 .notion-markdown h2 { margin: 2.15em 0 .75em; font-family: var(--font-display); font-size: 29px; line-height: 1.35; letter-spacing: -.04em; font-weight: 400; }
 .notion-markdown h3 { margin: 1.8em 0 .7em; font-family: var(--font-display); font-size: 22px; font-weight: 400; }
+.notion-markdown h4 { margin: 1.6em 0 .65em; font-family: var(--font-display); font-size: 19px; font-weight: 400; }
+.notion-markdown :is(h1, h2, h3, h4) { scroll-margin-top: 100px; word-break: keep-all; overflow-wrap: anywhere; }
+.notion-markdown hr { margin: 2em 0; border: 0; border-top: 1px solid var(--border); }
 .notion-markdown p { margin: 1em 0; }
 .notion-markdown strong { color: #111; }
 .notion-markdown a { color: #6d512f; text-decoration: underline; text-decoration-color: var(--caramel); text-underline-offset: 3px; }
@@ -184,11 +188,31 @@ img { max-width: 100%; }
 .notion-markdown pre { overflow-x: auto; padding: 18px; border-radius: 9px; background: #1f1e1c; color: #fff; }
 .notion-markdown pre code { padding: 0; background: transparent; }
 .notion-callout-block { display: grid; grid-template-columns: 28px 1fr; gap: 12px; margin: 1.7em 0; padding: 18px; border: 1px solid #ead7a9; border-radius: 8px; background: var(--cream); }
-.notion-callout-block > strong { font-size: 20px; }
-.notion-callout-block p { margin: 0; }
+.notion-callout-icon { font-size: 20px; }
+.notion-callout-content { min-width: 0; }
+.notion-callout-content > :first-child { margin-top: 0; }
+.notion-callout-content > :last-child { margin-bottom: 0; }
 .notion-markdown details { margin: 1.5em 0; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--paper); }
 .notion-markdown summary { cursor: pointer; font-weight: 700; }
-.notion-columns { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+.notion-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 20px; margin: 1.5em 0; }
+.notion-column { min-width: 0; }
+.notion-column > :first-child { margin-top: 0; }
+.notion-nested-blocks { margin-left: 1.4em; }
+.notion-empty-block { height: 1em; }
+.notion-underline { text-decoration: underline; text-underline-offset: 3px; }
+.notion-emphasis { color: var(--brown); }
+.notion-markdown .notion-toggle-heading > summary :is(h1, h2, h3, h4) { display: inline; margin: 0; }
+.notion-toc { padding: 18px 22px; margin: 1.5em 0; border: 1px solid var(--border); border-radius: 8px; background: var(--paper); }
+.notion-toc ol { padding: 0; list-style: none; }
+.notion-toc-depth-2 { margin-left: .75em !important; }
+.notion-toc-depth-3, .notion-toc-depth-4 { margin-left: 1.5em !important; }
+.notion-media { margin: 1.5em 0; }
+.notion-media img, .notion-media video { max-width: 100%; height: auto; border-radius: 8px; }
+.notion-media audio { width: 100%; }
+.notion-media figcaption { margin-top: 8px; color: var(--muted-foreground); font-size: 13px; }
+.notion-reference { padding: 14px 18px; border: 1px solid var(--border); border-radius: 8px; background: var(--paper); }
+.notion-citation { font-size: .8em; vertical-align: super; }
+.notion-markdown .katex-display { overflow-x: auto; overflow-y: hidden; padding: 8px 0; }
 .article-contact { padding: 44px 0; background: var(--butter); }
 .article-contact-inner { max-width: 900px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: center; }
 .article-contact-inner > div { min-width: 0; }
