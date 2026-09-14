@@ -13,6 +13,7 @@
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "sync:notion": "node scripts/sync-notion.mjs",
     "sync:notion:templates": "node scripts/sync-notion-templates.mjs",
+    "sync:notion:business": "node scripts/sync-notion-business.mjs",
     "lint": "oxlint",
     "format": "oxfmt"
   },

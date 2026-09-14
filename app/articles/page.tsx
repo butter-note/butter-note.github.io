@@ -4,6 +4,7 @@ import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { getPosts } from '@/lib/posts';
 import { CatalogBrowser } from '@/components/catalog-browser';
+import { BlogNav } from '@/components/blog-nav';
 
 export const metadata: Metadata = {
   title: '노션 블로그 | 버터노트',
@@ -26,6 +27,7 @@ export default function ArticlesPage() {
           <img src="/brand/characters/paper.png" alt="문서를 읽고 있는 버터노트 캐릭터" />
         </div>
       </section>
+      <BlogNav current="articles" />
       <section className="guides-list-section">
         <div className="site-container">
           <CatalogBrowser

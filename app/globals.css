@@ -138,6 +138,52 @@ img { max-width: 100%; }
 .guides-hero p:last-child { max-width: 620px; margin: 22px 0 0; color: var(--brown); font-size: 17px; line-height: 1.7; }
 .guides-hero img { width: 250px; filter: drop-shadow(8px 12px 0 rgba(242,195,125,.28)); }
 .guides-list-section { padding: 46px 0 110px; background: #fff; }
+.blog-nav { border-bottom: 1px solid var(--border); background: var(--card); }
+.blog-nav-inner { display: flex; flex-wrap: wrap; gap: 4px 24px; }
+.blog-nav a { display: inline-flex; align-items: center; min-height: 60px; padding: 12px 4px; border-bottom: 3px solid transparent; color: var(--muted-foreground); font-size: 14px; font-weight: 700; }
+.blog-nav a[aria-current="page"] { border-bottom-color: var(--foreground); color: var(--foreground); }
+.blog-nav a:hover { color: var(--brown); background: var(--paper); }
+.blog-nav a:focus-visible, .case-card:focus-visible, .faq-item > summary:focus-visible, .footer-links a:focus-visible { outline: 2px solid var(--brown); outline-offset: 3px; }
+.case-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.case-card { display: flex; flex-direction: column; min-width: 0; padding: 26px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--paper); overflow-wrap: anywhere; }
+.case-card:hover { border-color: var(--brown); }
+.case-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.case-card-top img { width: 90px; height: 80px; object-fit: contain; }
+.case-card h2 { margin: 16px 0; font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 1.5; word-break: keep-all; }
+.case-industry { margin: 16px 0 0; color: var(--brown); font-size: 12px; font-weight: 700; }
+.case-description { margin: 0 0 24px; color: var(--muted-foreground); font-size: 14px; line-height: 1.75; }
+.case-card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: auto; padding-top: 18px; border-top: 1px solid var(--border); color: var(--brown); font-size: 13px; font-weight: 700; }
+.case-card-bottom svg { flex-shrink: 0; }
+.faq-list { display: grid; gap: 12px; }
+.faq-item { min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card); }
+.faq-item[open] { border-color: var(--brown); }
+.faq-item > summary { display: flex; align-items: center; gap: 18px; min-height: 88px; padding: 22px 26px; list-style: none; cursor: pointer; border-radius: var(--radius-lg); }
+.faq-item > summary::-webkit-details-marker { display: none; }
+.faq-item > summary:hover, .faq-item[open] > summary { background: var(--paper); }
+.faq-question-mark { align-self: flex-start; padding-top: 4px; font-family: var(--font-display); color: var(--brown); font-size: 24px; }
+.faq-question { display: grid; justify-items: start; flex: 1; min-width: 0; gap: 10px; font-size: 18px; font-weight: 700; line-height: 1.6; word-break: keep-all; overflow-wrap: anywhere; }
+.faq-chevron { flex-shrink: 0; color: var(--brown); }
+.faq-item[open] > summary .faq-chevron { transform: rotate(180deg); }
+.faq-answer { min-width: 0; padding: 24px 30px; border-top: 1px solid var(--border); }
+.faq-answer .notion-markdown > :first-child { margin-top: 0; }
+.faq-answer .notion-markdown > :last-child { margin-bottom: 0; }
+.footer-links { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.footer-links a { min-height: 44px; display: inline-flex; align-items: center; }
+.business-resources { display: flex; flex-wrap: wrap; gap: 14px; padding-top: 32px; padding-bottom: 48px; }
+.business-hero h1, .business-hero p:last-child { word-break: keep-all; overflow-wrap: anywhere; }
+@media (max-width: 960px) {
+  .case-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .business-hero .guides-hero-grid { grid-template-columns: minmax(0, 1fr) 86px; gap: 18px; }
+  .guides-hero.business-hero h1 { font-size: clamp(30px, 8.2vw, 38px); }
+  .business-hero.guides-hero img { width: 86px; height: auto; }
+  .case-grid { grid-template-columns: minmax(0, 1fr); }
+  .blog-nav-inner { gap: 4px 18px; }
+  .faq-item > summary { gap: 12px; padding: 18px 16px; }
+  .faq-question { font-size: 16px; }
+  .faq-answer { padding: 20px 16px; }
+}
 .catalog-controls { margin-bottom: 28px; }
 .catalog-search-label { display: block; margin-bottom: 10px; font-size: 14px; font-weight: 700; }
 .catalog-search-field { display: flex; align-items: center; gap: 12px; min-height: 54px; padding: 0 8px 0 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card); color: var(--muted-foreground); }

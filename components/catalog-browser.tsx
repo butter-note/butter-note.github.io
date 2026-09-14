@@ -17,10 +17,13 @@ type CatalogBrowserProps = {
   listClassName: string;
   showMarketplaceFilter?: boolean;
   pageSize?: number;
+  emptyTitle?: string;
+  emptyDescription?: string;
+  searchPlaceholder?: string;
 };
 
 /** Cards stay server-rendered; only public search metadata is sent to this control. */
-export function CatalogBrowser({ items, children, label, listClassName, showMarketplaceFilter = false, pageSize = 6 }: CatalogBrowserProps) {
+export function CatalogBrowser({ items, children, label, listClassName, showMarketplaceFilter = false, pageSize = 6, emptyTitle = '등록된 콘텐츠가 없어요.', emptyDescription = '새 콘텐츠가 공개되면 이곳에서 볼 수 있어요.', searchPlaceholder }: CatalogBrowserProps) {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('');
   const [marketplace, setMarketplace] = useState('');
@@ -71,7 +74,7 @@ export function CatalogBrowser({ items, children, label, listClassName, showMark
               type="search"
               value={query}
               onChange={(event) => changeQuery(event.target.value)}
-              placeholder={showMarketplaceFilter ? '제목, 설명, 카테고리, 판매처 검색' : '제목, 설명, 카테고리 검색'}
+              placeholder={searchPlaceholder ?? (showMarketplaceFilter ? '제목, 설명, 카테고리, 판매처 검색' : '제목, 설명, 카테고리 검색')}
               maxLength={200}
               autoComplete="off"
               spellCheck={false}
@@ -113,8 +116,8 @@ export function CatalogBrowser({ items, children, label, listClassName, showMark
         ) : (
           <div className="catalog-empty">
             <Search size={32} aria-hidden="true" />
-            <h2>{items.length ? '조건에 맞는 콘텐츠가 없어요.' : '등록된 콘텐츠가 없어요.'}</h2>
-            <p>{items.length ? '검색어를 짧게 바꾸거나 다른 카테고리를 선택해 보세요.' : '새 콘텐츠가 공개되면 이곳에서 볼 수 있어요.'}</p>
+            <h2>{items.length ? '조건에 맞는 콘텐츠가 없어요.' : emptyTitle}</h2>
+            <p>{items.length ? '검색어를 짧게 바꾸거나 다른 카테고리를 선택해 보세요.' : emptyDescription}</p>
             {hasFilters && <button className="button button-secondary" type="button" onClick={resetFilters}>전체 콘텐츠 보기</button>}
           </div>
         )}

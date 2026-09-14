@@ -55,6 +55,17 @@ jobs:
           else
             echo "Notion template sync skipped: secrets are not configured."
           fi
+      - name: Sync Notion case studies and FAQs
+        env:
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_CASES_DATA_SOURCE_ID: ${{ secrets.NOTION_CASES_DATA_SOURCE_ID }}
+          NOTION_FAQ_DATA_SOURCE_ID: ${{ secrets.NOTION_FAQ_DATA_SOURCE_ID }}
+        run: |
+          if [ -n "$NOTION_API_KEY" ]; then
+            npm run sync:notion:business
+          else
+            echo "Notion case study/FAQ sync skipped: NOTION_API_KEY is not configured."
+          fi
       - name: Build static site
         run: npm run build
       - name: Disable Jekyll processing

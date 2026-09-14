@@ -1,0 +1,10 @@
+{
+  "cases": {
+    "name": "노션 구축 사례 관리",
+    "databaseId": "53c6f0cc-b4bd-836c-b7ba-81ce9dcf9112"
+  },
+  "faqs": {
+    "name": "노션 FAQ 관리",
+    "databaseId": "6f66f0cc-b4bd-8283-b9f1-81cfb443f798"
+  }
+}

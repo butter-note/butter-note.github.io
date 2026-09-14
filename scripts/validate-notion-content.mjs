@@ -26,9 +26,23 @@ for (const file of files) {
     failures.push(`${file}: ${error.message}`);
   }
 }
+const business = JSON.parse(await readFile(path.resolve('content/business/content.json'), 'utf8'));
+for (const kind of ['cases', 'faqs']) {
+  if (!Array.isArray(business[kind])) throw new Error(`${kind}: 잘못된 데이터 형식입니다.`);
+  for (const entry of business[kind]) {
+    try {
+      const options = { title: entry.title, flavor: 'notion', idPrefix: `${kind}-${entry.id}` };
+      const html = renderToStaticMarkup(createElement(ReactMarkdown, notionMarkdownOptions(entry.content, options)));
+      if (!html.trim()) throw new Error('화면에 표시할 본문이 없습니다.');
+    } catch (error) {
+      failures.push(`${kind}/${entry.slug}: ${error.message}`);
+    }
+  }
+}
 if (failures.length) {
   console.error(`본문 변환 실패 — 기존 배포를 유지합니다.\n${failures.join('\n')}`);
   process.exitCode = 1;
 } else {
   console.log(`총 ${files.length}개 게시글의 원문/웹 본문 변환을 확인했습니다.`);
+  console.log(`구축 사례 ${business.cases.length}개, FAQ ${business.faqs.length}개 본문 변환을 확인했습니다.`);
 }

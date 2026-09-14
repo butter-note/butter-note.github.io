@@ -8,6 +8,16 @@ import { notionMarkdownOptions } from '../lib/notion-renderer.mjs';
 
 const render = (source, options) => renderToStaticMarkup(createElement(ReactMarkdown, notionMarkdownOptions(source, options)));
 
+test('multiple FAQ answers have independent heading and table-of-contents anchors', () => {
+  const source = '<table_of_contents/>\n## 준비 사항\n답변';
+  const one = render(source, { idPrefix: 'faq-one' });
+  const two = render(source, { idPrefix: 'faq-two' });
+  assert.match(one, /id="faq-one-heading-1"/);
+  assert.match(one, /href="#faq-one-heading-1"/);
+  assert.match(two, /id="faq-two-heading-1"/);
+  assert.ok(!two.includes('faq-one'));
+});
+
 test('regression: all ten shortcut sections after a Notion callout render as headings', () => {
   const sections = Array.from({ length: 10 }, (_, index) => `---\n## ${index + 1}) 단축키\n**어떤 상황에서 좋나?**\n- 설명 ${index + 1}\n**팁**\n- 단축키를 사용해요.`).join('\n');
   const source = `## 핵심 단축키\n소개입니다.\n<callout icon="💡" color="yellow_bg">\n\t**Windows 기준(Ctrl)** 으로 설명합니다.\n</callout>\n${sections}`;

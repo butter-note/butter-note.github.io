@@ -65,6 +65,10 @@ export default function ServicesPage() {
         </div>
       </section>
 
+      <nav className="site-container business-resources" aria-label="교육·구축 참고 자료">
+        <a className="button button-secondary" href="/cases/">구축 사례 보기 <ArrowRight size={17} aria-hidden="true" /></a>
+        <a className="button button-secondary" href="/faq/">자주 묻는 질문 <ArrowRight size={17} aria-hidden="true" /></a>
+      </nav>
       <section className="page-cta">
         <div className="site-container page-cta-inner">
           <img src="/brand/characters/heart.png" alt="하트를 보내는 버터노트 캐릭터" />
