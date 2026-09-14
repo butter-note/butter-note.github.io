@@ -4,6 +4,7 @@ import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { VideoPlayer } from '@/components/video-player';
 import { getVideos } from '@/lib/videos';
+import { CatalogBrowser } from '@/components/catalog-browser';
 
 export const metadata: Metadata = {
   title: '무료 강의 | 버터노트',
@@ -35,7 +36,11 @@ export default function LecturesPage() {
             {hasPlayableVideo && <p>영상을 누르면 큰 화면으로 볼 수 있어요.</p>}
           </div>
           {lessons.length ? (
-            <div className="lessons-grid">
+            <CatalogBrowser
+              label="무료 강의"
+              listClassName="lessons-grid"
+              items={lessons.map((lesson) => ({ id: lesson.id, title: lesson.title, description: lesson.description, category: lesson.category }))}
+            >
               {lessons.map((lesson) => (
                 <article className="lesson-card" key={lesson.id} id={`lesson-${lesson.id}`}>
                   <VideoPlayer url={lesson.url} title={lesson.title} />
@@ -50,7 +55,7 @@ export default function LecturesPage() {
                   </div>
                 </article>
               ))}
-            </div>
+            </CatalogBrowser>
           ) : (
             <div className="template-empty-state">
               <img src="/brand/characters/paper.png" alt="강의를 준비하는 버터노트 캐릭터" />

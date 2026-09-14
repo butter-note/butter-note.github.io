@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { getPosts } from '@/lib/posts';
+import { CatalogBrowser } from '@/components/catalog-browser';
 
 export const metadata: Metadata = {
   title: '노션 가이드(아티클) | 버터노트',
@@ -27,13 +28,11 @@ export default function ArticlesPage() {
       </section>
       <section className="guides-list-section">
         <div className="site-container">
-          <div className="category-row" aria-label="아티클 카테고리">
-            <span className="category-pill active">전체</span>
-            <span className="category-pill">노션 첫걸음</span>
-            <span className="category-pill">팀 협업</span>
-            <span className="category-pill">템플릿</span>
-          </div>
-          <div className="guide-list">
+          <CatalogBrowser
+            label="아티클"
+            listClassName="guide-list"
+            items={posts.map((post) => ({ id: post.slug, title: post.title, description: post.description, category: post.category }))}
+          >
             {posts.map((post) => (
               <a className="guide-list-item" href={`/articles/${post.slug}`} key={post.slug}>
                 <div className="guide-list-visual"><img src={post.character} alt="" aria-hidden="true" /></div>
@@ -46,7 +45,7 @@ export default function ArticlesPage() {
                 <ArrowRight className="guide-arrow" aria-hidden="true" size={22} />
               </a>
             ))}
-          </div>
+          </CatalogBrowser>
         </div>
       </section>
       <SiteFooter />

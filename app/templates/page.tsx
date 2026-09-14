@@ -3,6 +3,7 @@ import { ArrowUpRight, Database, ExternalLink } from 'lucide-react';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { getTemplates } from '@/lib/templates';
+import { CatalogBrowser } from '@/components/catalog-browser';
 
 export const metadata: Metadata = {
   title: '노션 템플릿 | 버터노트',
@@ -26,10 +27,14 @@ export default function TemplatesPage() {
         <div className="site-container">
           <div className="database-toolbar">
             <div><Database aria-hidden="true" size={18} /><strong>템플릿 데이터베이스</strong><span>{templates.length}개</span></div>
-            <div className="database-view-tabs" aria-label="판매처"><span className="active">전체</span><a href="https://www.notion.com/templates" target="_blank" rel="noreferrer">Notion Marketplace</a><a href="https://ctee.kr/" target="_blank" rel="noreferrer">CTEE</a></div>
           </div>
           {templates.length ? (
-            <div className="template-gallery">
+            <CatalogBrowser
+              label="템플릿"
+              listClassName="template-gallery"
+              showMarketplaceFilter
+              items={templates.map((item) => ({ id: item.id, title: item.name, description: item.description, category: item.category, marketplaces: item.listings.map((listing) => listing.marketplace) }))}
+            >
               {templates.map((item) => (
                 <article className="template-card" key={item.id}>
                   <div className="template-cover"><img src={item.cover} alt="" aria-hidden="true" />{item.featured && <span>추천</span>}</div>
@@ -55,7 +60,7 @@ export default function TemplatesPage() {
                   </div>
                 </article>
               ))}
-            </div>
+            </CatalogBrowser>
           ) : (
             <div className="template-empty-state">
               <img src="/brand/characters/sleep.png" alt="잠든 버터노트 캐릭터" />
