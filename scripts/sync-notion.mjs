@@ -1,8 +1,16 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-const API_KEY = process.env.NOTION_API_KEY;
-const DATA_SOURCE_ID = process.env.NOTION_DATA_SOURCE_ID;
+function envValue(name) {
+  const value = (process.env[name] ?? '').trim().replace(/^\uFEFF/, '');
+  const quote = value[0];
+  return (quote === '"' || quote === "'") && value.at(-1) === quote
+    ? value.slice(1, -1).trim()
+    : value;
+}
+
+const API_KEY = envValue('NOTION_API_KEY');
+const DATA_SOURCE_ID = envValue('NOTION_DATA_SOURCE_ID');
 const NOTION_VERSION = '2026-03-11';
 
 if (!API_KEY || !DATA_SOURCE_ID) {
