@@ -1,6 +1,8 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { localizeImages } from './article-images.mjs';
+import { partitionPublishedContent, richText, selectName, videoFromPage } from './notion-content.mjs';
+import { getVideoEmbed } from '../lib/video-embed.mjs';
 
 function envValue(name) {
   const value = (process.env[name] ?? '').trim().replace(/^\uFEFF/, '');
@@ -36,15 +38,6 @@ async function notionRequest(url, options = {}) {
   return response.json();
 }
 
-function richText(property) {
-  const values = property?.title ?? property?.rich_text ?? [];
-  return values.map((item) => item.plain_text ?? '').join('').trim();
-}
-
-function selectName(property) {
-  return property?.status?.name ?? property?.select?.name ?? '';
-}
-
 function dateValue(property, fallback) {
   return property?.date?.start?.slice(0, 10) ?? fallback.slice(0, 10);
 }
@@ -76,7 +69,7 @@ function characterFor(category) {
   return '/brand/characters/question.png';
 }
 
-async function queryPublishedPages() {
+async function queryContentPages() {
   const pages = [];
   let startCursor;
 
@@ -90,17 +83,15 @@ async function queryPublishedPages() {
     startCursor = result.has_more ? result.next_cursor : undefined;
   } while (startCursor);
 
-  return pages.filter((page) => {
-    const status = selectName(page.properties?.상태 ?? page.properties?.Status);
-    return ['발행', 'Published'].includes(status);
-  });
+  return pages;
 }
 
-const pages = await queryPublishedPages();
+const { articles: pages, videos: videoPages } = partitionPublishedContent(await queryContentPages());
 const contentDir = path.resolve('content', 'posts');
 await mkdir(contentDir, { recursive: true });
 const originalsDir = path.resolve('content', 'notion-originals');
 await mkdir(originalsDir, { recursive: true });
+const articleFiles = new Set();
 
 for (const page of pages) {
   const markdownResult = await notionRequest(`/v1/pages/${page.id}/markdown`);
@@ -138,7 +129,30 @@ for (const page of pages) {
 
   await writeFile(path.join(contentDir, `${slug}.md`), `${content.trim()}\n`, 'utf8');
   await writeFile(path.join(contentDir, `${slug}.json`), `${JSON.stringify(meta, null, 2)}\n`, 'utf8');
+  articleFiles.add(`${slug}.json`);
   console.log(`동기화 완료: ${title}`);
 }
 
-console.log(`총 ${pages.length}개의 글을 동기화했습니다.`);
+// Only remove generated Notion copies after every current article was fetched successfully.
+// This also handles an article changing its format to video, or becoming unpublished.
+for (const file of (await readdir(contentDir)).filter((name) => name.endsWith('.json'))) {
+  if (articleFiles.has(file)) continue;
+  const meta = JSON.parse(await readFile(path.join(contentDir, file), 'utf8'));
+  if (!meta.notionPageId) continue; // Hand-written repository posts belong to the author.
+  for (const name of [file, file.replace(/\.json$/, '.md')]) {
+    const target = path.resolve(contentDir, name);
+    if (path.dirname(target) !== contentDir) throw new Error('생성 파일 정리 경로가 올바르지 않습니다.');
+    await unlink(target).catch((error) => { if (error.code !== 'ENOENT') throw error; });
+  }
+}
+
+const videos = videoPages.map(videoFromPage);
+for (const video of videos) {
+  const embed = getVideoEmbed(video.url);
+  if (embed.kind === 'missing' || embed.kind === 'link') console.warn(`영상 임베드 확인 필요: ${video.id} (${embed.kind})`);
+}
+const videosDir = path.resolve('content', 'videos');
+await mkdir(videosDir, { recursive: true });
+// Replace the complete list so unpublished or removed videos do not linger on the site.
+await writeFile(path.join(videosDir, 'videos.json'), `${JSON.stringify(videos, null, 2)}\n`, 'utf8');
+console.log(`총 ${pages.length}개의 글과 ${videos.length}개의 무료 강의를 동기화했습니다.`);

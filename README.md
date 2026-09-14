@@ -43,3 +43,26 @@ npm run sync:notion:templates
 GitHub 저장소의 Actions secrets에 `NOTION_API_KEY`, `NOTION_DATA_SOURCE_ID`, `NOTION_TEMPLATES_DATA_SOURCE_ID`, `NOTION_SALES_DATA_SOURCE_ID`를 등록하면 배포할 때마다 최신 노션 데이터가 자동으로 반영됩니다. 노션에서만 내용을 바꾼 경우에는 GitHub의 **Actions → Deploy to GitHub Pages → Run workflow**로 수동 배포할 수 있습니다.
 
 템플릿의 `판매 링크` 관계와 판매 링크 데이터베이스의 `템플릿` 관계를 연결하면 하나의 템플릿 카드에 Notion Marketplace, CTEE 등 여러 판매처가 표시됩니다.
+
+## 무료 강의
+
+상단 메뉴의 **무료 강의** (`/lectures/`)는 같은 콘텐츠 DB를 사용합니다. 별도 데이터베이스나 API 키는 필요하지 않습니다.
+
+| 속성 | 노션 유형 | 입력 내용 |
+| --- | --- | --- |
+| 이름 / 제목 (Name / Title) | 제목 | 강의 제목 |
+| 상태 (Status) | 상태 또는 선택 | `발행` (또는 `Published`) |
+| 형식 (Format) | 선택 | `영상` (또는 `Video`) |
+| URL | URL | 영상 주소. iframe 코드 대신 URL만 입력 |
+| 요약 (Description) | 텍스트 | 선택: 영상 아래 설명 |
+| 카테고리 (Category) | 선택 | 선택: 강의 분류 |
+| 발행일 (Date) | 날짜 | 선택: 비어 있으면 생성일 사용 |
+| 순서 (Order) | 숫자 | 선택: 작은 숫자부터 표시, 같은 순서는 최신순 |
+
+`npm run sync:notion`과 기존 GitHub Actions 배포에서 글/영상을 함께 갱신합니다. 영상 형식은 아티클로 중복 게시하지 않으며 페이지 본문을 불러오지 않습니다. 영상 목록은 매번 전체 교체되어 비공개 또는 삭제된 영상이 다음 배포에서 빠집니다. 이전에 글로 동기화된 항목도 형식 변경/비공개 시 생성된 사본만 정리합니다. 노션 원본이나 직접 작성한 저장소 게시글은 삭제하지 않습니다.
+
+YouTube 일반·공유·Shorts·Live 링크, Vimeo 링크, HTTPS MP4/WebM/OGV/OGG 파일을 재생창으로 표시합니다. 자동재생은 하지 않습니다. 임의의 웹사이트나 iframe HTML을 그대로 실행하지 않으며, 지원하지 않는 HTTPS 주소는 원본 링크로 표시합니다. 잘못되거나 비어 있는 URL은 준비 중 상태와 동기화 경고를 남깁니다.
+
+영상 제공자의 임베드 허용 여부, 삭제/비공개, 로그인·연령 제한에 따라 재생이 제한될 수 있으므로 각 카드에 원본 영상 링크를 함께 둡니다. 플레이어의 버튼·자막 같은 내부 UI는 영상 제공자가 제어하고, 카드와 페이지는 버터노트 스타일을 사용합니다.
+
+임베드 규격: [YouTube 공식 문서](https://developers.google.com/youtube/player_parameters), [Vimeo 비공개 링크 안내](https://help.vimeo.com/hc/en-us/articles/12426470858001-Embedded-player-displays-This-video-does-not-exist-message).

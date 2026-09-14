@@ -32,9 +32,9 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: npm ci
-      - name: Test article rendering
+      - name: Test content rendering
         run: npm test
-      - name: Sync Notion articles
+      - name: Sync Notion articles and video lessons
         env:
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
@@ -42,7 +42,7 @@ jobs:
           if [ -n "$NOTION_API_KEY" ] && [ -n "$NOTION_DATA_SOURCE_ID" ]; then
             npm run sync:notion
           else
-            echo "Notion article sync skipped: secrets are not configured."
+            echo "Notion content sync skipped: secrets are not configured."
           fi
       - name: Sync Notion templates
         env:
