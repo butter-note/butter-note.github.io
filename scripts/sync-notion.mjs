@@ -1,7 +1,7 @@
 import { mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { localizeImages } from './article-images.mjs';
-import { partitionPublishedContent, richText, selectName, videoFromPage } from './notion-content.mjs';
+import { partitionPublishedContent, richText, selectName, videoFromPage, videoUrlsInMarkdown } from './notion-content.mjs';
 import { getVideoEmbed } from '../lib/video-embed.mjs';
 
 function envValue(name) {
@@ -148,8 +148,19 @@ for (const file of (await readdir(contentDir)).filter((name) => name.endsWith('.
 
 const videos = videoPages.map(videoFromPage);
 for (const video of videos) {
+  if (!video.url) {
+    const body = await notionRequest(`/v1/pages/${video.id}/markdown`);
+    if (body.truncated || body.unknown_block_ids?.length) throw new Error(`영상 본문을 완전히 읽지 못했습니다: ${video.id}`);
+    const bodyUrls = videoUrlsInMarkdown(body.markdown);
+    if (bodyUrls.length === 1) {
+      video.url = bodyUrls[0];
+      console.log(`영상 URL 연결: ${video.id} (노션 본문에서 확인)`);
+    } else if (bodyUrls.length > 1) {
+      console.warn(`영상 URL을 지정해주세요: ${video.id} (본문에 영상 ${bodyUrls.length}개)`);
+    }
+  }
   const embed = getVideoEmbed(video.url);
-  if (embed.kind === 'missing' || embed.kind === 'link') console.warn(`영상 임베드 확인 필요: ${video.id} (${embed.kind})`);
+  if (embed.kind === 'missing' || embed.kind === 'link') console.warn(`영상 임베드 확인 필요: ${video.id} (${video.url ? embed.kind : 'URL 비어 있음'})`);
 }
 const videosDir = path.resolve('content', 'videos');
 await mkdir(videosDir, { recursive: true });

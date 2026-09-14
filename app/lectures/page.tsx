@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 
 export default function LecturesPage() {
   const lessons = getVideos();
+  const hasPlayableVideo = lessons.some((lesson) => ['iframe', 'video'].includes(lesson.embed.kind));
+  const hasOriginalLink = lessons.some((lesson) => lesson.embed.sourceUrl);
   return (
     <main>
       <SiteHeader />
@@ -30,7 +32,7 @@ export default function LecturesPage() {
         <div className="site-container">
           <div className="lessons-toolbar">
             <h2 id="lessons-title"><PlaySquare size={20} aria-hidden="true" /> 무료 강의 <span>{lessons.length}개</span></h2>
-            {lessons.length > 0 && <p>재생 버튼을 눌러 바로 시작하세요.</p>}
+            {hasPlayableVideo && <p>재생 버튼을 눌러 바로 시작하세요.</p>}
           </div>
           {lessons.length ? (
             <div className="lessons-grid">
@@ -57,7 +59,7 @@ export default function LecturesPage() {
               <a className="button button-secondary" href="/articles/">노션 가이드 먼저 읽기</a>
             </div>
           )}
-          {lessons.length > 0 && <p className="lessons-help">재생이 되지 않으면 ‘원본 영상 보기’를 눌러주세요. 영상은 각 제공 서비스의 플레이어에서 재생됩니다.</p>}
+          {hasOriginalLink && <p className="lessons-help">재생이 되지 않으면 ‘원본 영상 보기’를 눌러주세요. 영상은 각 제공 서비스의 플레이어에서 재생됩니다.</p>}
         </div>
       </section>
       <SiteFooter />

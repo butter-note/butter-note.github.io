@@ -4,7 +4,7 @@ const page = (id, format, status) => ({
   object: 'page', id, created_time: '2026-09-14T09:00:00Z', url: `https://www.notion.so/${id}`,
   properties: {
     이름: { title: [{ plain_text: id }] }, 상태: select(status), 형식: select(format),
-    Slug: text(id), URL: { url: 'https://youtu.be/M7lc1UVf-VE' },
+    Slug: text(id), URL: { url: process.env.NOTION_FIXTURE_BODY === '1' && format === '영상' ? null : 'https://youtu.be/M7lc1UVf-VE' },
   },
 });
 
@@ -22,5 +22,6 @@ globalThis.fetch = async (input, options = {}) => {
     });
   }
   if (url.pathname === '/v1/pages/new-article/markdown') return Response.json({ markdown: '# 원문\n내용 유지', truncated: false, unknown_block_ids: [] });
+  if (url.pathname === '/v1/pages/converted-video/markdown' && process.env.NOTION_FIXTURE_BODY === '1') return Response.json({ markdown: '<video src="https://youtu.be/GVBXtqWP4E4?si=5AnWOBCDQXydUONa"/>', truncated: false, unknown_block_ids: [] });
   throw new Error(`Video or draft body should never be fetched: ${url.pathname}`);
 };

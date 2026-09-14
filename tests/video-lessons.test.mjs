@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { getVideoEmbed } from '../lib/video-embed.mjs';
-import { partitionPublishedContent, videoFromPage } from '../scripts/notion-content.mjs';
+import { partitionPublishedContent, videoFromPage, videoUrlsInMarkdown } from '../scripts/notion-content.mjs';
 
 const select = (name) => ({ select: { name } });
 const text = (value) => ({ rich_text: [{ plain_text: value }] });
@@ -79,4 +79,16 @@ test('missing URLs stay visible as unavailable instead of inventing a video', ()
   const item = videoFromPage(page('missing', { 이름: { title: [{ plain_text: '영상 준비 중' }] } }));
   assert.equal(item.url, '');
   assert.equal(getVideoEmbed(item.url).kind, 'missing');
+});
+
+test('an empty URL property does not hide a populated video URL alias', () => {
+  const item = videoFromPage(page('video', { URL: { url: null }, '영상 URL': { url: 'https://youtu.be/M7lc1UVf-VE' } }));
+  assert.equal(item.url, 'https://youtu.be/M7lc1UVf-VE');
+});
+
+test('video links and native Notion video blocks in the body are recognized and deduplicated', () => {
+  const url = 'https://youtu.be/GVBXtqWP4E4?si=5AnWOBCDQXydUONa';
+  assert.deepEqual(videoUrlsInMarkdown(`[${url}](${url})\n<video src="${url}">강의</video>`), [url]);
+  assert.deepEqual(videoUrlsInMarkdown(`https://www.notion.so/page\n${url}\nhttps://youtu.be/M7lc1UVf-VE`), [url, 'https://youtu.be/M7lc1UVf-VE']);
+  assert.deepEqual(videoUrlsInMarkdown('설명만 있는 영상 페이지\nhttps://example.com/'), []);
 });

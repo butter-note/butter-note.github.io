@@ -17,10 +17,10 @@ test('real sync paginates, separates videos, replaces the video list and preserv
     await writeFile(path.join(posts, 'converted-video.md'), '이전에 아티클로 동기화된 영상');
     await writeFile(path.join(posts, 'manual.json'), JSON.stringify({ title: '직접 작성한 글' }));
     await writeFile(path.join(posts, 'manual.md'), '수정하지 않는 사용자 원문');
-    const run = (draft = false) => exec(process.execPath, [
+    const run = (draft = false, body = false) => exec(process.execPath, [
       '--import', new URL('./fixtures/notion-video-api.mjs', import.meta.url).href,
       fileURLToPath(new URL('../scripts/sync-notion.mjs', import.meta.url)),
-    ], { cwd: directory, env: { ...process.env, NOTION_API_KEY: 'test-only', NOTION_DATA_SOURCE_ID: 'test-source', NOTION_FIXTURE_DRAFT: draft ? '1' : '0' } });
+    ], { cwd: directory, env: { ...process.env, NOTION_API_KEY: 'test-only', NOTION_DATA_SOURCE_ID: 'test-source', NOTION_FIXTURE_DRAFT: draft ? '1' : '0', NOTION_FIXTURE_BODY: body ? '1' : '0' } });
 
     const first = await run();
     assert.match(first.stdout, /1개의 글과 1개의 무료 강의/);
@@ -31,6 +31,10 @@ test('real sync paginates, separates videos, replaces the video list and preserv
     assert.equal(videos[0].id, 'converted-video');
     assert.equal(videos[0].url, 'https://youtu.be/M7lc1UVf-VE');
     assert.equal(await readFile(path.join(directory, 'content', 'notion-originals', 'newarticle.md'), 'utf8'), '# 원문\n내용 유지');
+
+    const bodyRun = await run(false, true);
+    assert.match(bodyRun.stdout, /노션 본문에서 확인/);
+    assert.equal(JSON.parse(await readFile(videosFile, 'utf8'))[0].url, 'https://youtu.be/GVBXtqWP4E4?si=5AnWOBCDQXydUONa');
 
     await run(true);
     assert.deepEqual(JSON.parse(await readFile(videosFile, 'utf8')), []);
