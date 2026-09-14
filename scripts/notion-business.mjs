@@ -52,8 +52,10 @@ export async function queryAllPages(request, sourceId) {
 
 function pageMetadata(page, kind) {
   const properties = page.properties ?? {};
-  const title = richText(Object.values(properties).find((value) => value.type === 'title'));
-  if (!title) throw new Error(`${kind}: 공개 항목 ${page.id}에 제목이 없습니다.`);
+  const titleProperty = Object.values(properties).find((value) => value.type === 'title');
+  if (!titleProperty) throw new Error(`${kind}: ${page.id}의 제목 속성을 읽지 못했습니다.`);
+  const title = richText(titleProperty);
+  if (!title) return null;
   const compactId = page.id.replaceAll('-', '');
   const customSlug = richText(property(properties, ['Slug', '슬러그'])).normalize('NFKC').trim();
   if (customSlug && !/^[\p{L}\p{N}]+(?:[-_][\p{L}\p{N}]+)*$/u.test(customSlug)) {
@@ -90,7 +92,7 @@ export function answerMarkdown(answer) {
   }).join('').trim();
 }
 
-export async function collectBusinessContent({ request, config, localize = async (body) => body }) {
+export async function collectBusinessContent({ request, config, localize = async (body) => body, warn = console.warn }) {
   const bundle = { cases: [], faqs: [] };
   for (const kind of ['cases', 'faqs']) {
     try {
@@ -103,16 +105,23 @@ export async function collectBusinessContent({ request, config, localize = async
       for (const page of pages) {
         if (!isPublicPage(page, rules)) continue;
         const meta = pageMetadata(page, kind);
-        const slugKey = meta.slug.toLowerCase();
-        if (slugs.has(slugKey)) throw new Error(`중복 Slug: ${meta.slug}`);
-        slugs.add(slugKey);
+        if (!meta) {
+          warn(`${config[kind].name}: 공개 제외 — 제목이 비어 있습니다 (${page.id}). 노션 원본은 유지됩니다.`);
+          continue;
+        }
         const result = await request(`/v1/pages/${page.id}/markdown`);
         if (result.truncated || result.unknown_block_ids?.length || typeof result.markdown !== 'string') {
           throw new Error(`본문이 불완전합니다 (${page.id}). 본문 길이와 하위 페이지 접근 권한을 확인해주세요.`);
         }
         let body = result.markdown;
         if (kind === 'faqs' && !body.trim()) body = answerMarkdown(property(page.properties, ['답변', 'Answer']));
-        if (!body.trim()) throw new Error(`공개 항목 ${page.id}에 본문${kind === 'faqs' ? '/답변' : ''}이 없습니다.`);
+        if (!body.trim()) {
+          warn(`${config[kind].name}: 공개 제외 — 본문${kind === 'faqs' ? '/답변' : ''}이 비어 있습니다 (${page.id}). 노션 원본은 유지됩니다.`);
+          continue;
+        }
+        const slugKey = meta.slug.toLowerCase();
+        if (slugs.has(slugKey)) throw new Error(`중복 Slug: ${meta.slug}`);
+        slugs.add(slugKey);
         const content = await localize(body, `${kind}-${page.id.replaceAll('-', '')}`);
         // Deliberate allowlist: never serialize customers, contacts, internal notes or all page properties.
         bundle[kind].push({ ...meta, content, format: 'notion' });

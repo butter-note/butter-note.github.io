@@ -89,8 +89,37 @@ test('FAQ page body takes priority; empty pages can use the 답변 property', as
   assert.match(filled.faqs[0].content, /본문/);
   const fallback = await collectBusinessContent({ request: fixture({ cases: [], faqs: [faq], body: '' }).request, config });
   assert.equal(fallback.faqs[0].content, '속성 답변');
-  await assert.rejects(collectBusinessContent({ request: fixture({ cases: [], body: '' }).request, config }), /본문\/답변/);
+  const warnings = [];
+  const empty = await collectBusinessContent({ request: fixture({ cases: [], body: '' }).request, config, warn: (message) => warnings.push(message) });
+  assert.deepEqual(empty.faqs, []);
+  assert.match(warnings[0], /본문\/답변이 비어/);
   assert.match(answerMarkdown(rich('<script>alert(1)</script>')), /&lt;script&gt;/);
+});
+
+test('unfinished published entries are skipped without blocking valid content or fetching untitled bodies', async () => {
+  const warnings = [];
+  const emptyTitle = { type: 'title', title: [] };
+  const cases = [page('untitled-case', { 제목: emptyTitle }), page('empty-body'), page('valid-case')];
+  const faqs = [page('untitled-faq', { 제목: emptyTitle }), page('valid-faq')];
+  const { request, calls } = fixture({ cases, faqs });
+  const result = await collectBusinessContent({ request: async (endpoint, options) => endpoint.includes('/empty-body/markdown') ? { markdown: '', truncated: false, unknown_block_ids: [] } : request(endpoint, options), config, warn: (message) => warnings.push(message) });
+  assert.deepEqual(result.cases.map((entry) => entry.id), ['valid-case']);
+  assert.deepEqual(result.faqs.map((entry) => entry.id), ['valid-faq']);
+  assert.equal(warnings.length, 3);
+  assert.ok(!calls.some(({ endpoint }) => endpoint.includes('untitled') && endpoint.endsWith('/markdown')));
+  assert.deepEqual(cases[0].properties.제목.title, [], 'Notion input stays unchanged');
+  assert.ok(!JSON.stringify(warnings).includes('절대 노출'));
+});
+
+test('missing title schema and incomplete API responses still block deployment', async () => {
+  await assert.rejects(collectBusinessContent({ request: fixture({ cases: [page('missing-title', { 제목: rich('not a title') })] }).request, config }), /제목 속성을 읽지 못/);
+  await assert.rejects(collectBusinessContent({ request: fixture({ broken: true }).request, config }), /불완전/);
+});
+
+test('a standalone 상태 property publishes only 발행 and does not require a checkbox', () => {
+  const rules = publicationRules({ 상태: { type: 'status' } });
+  assert.equal(isPublicPage(page('ready', { 공개: undefined }), rules), true);
+  assert.equal(isPublicPage(page('draft', { 상태: { type: 'status', status: { name: '작성 중' } }, 공개: undefined }), rules), false);
 });
 
 test('custom slugs are safe and case insensitive duplicates stop publication', async () => {
