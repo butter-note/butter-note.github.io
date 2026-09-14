@@ -39,6 +39,7 @@ export default function LecturesPage() {
             <CatalogBrowser
               label="무료 강의"
               listClassName="lessons-grid"
+              pageSize={6}
               items={lessons.map((lesson) => ({ id: lesson.id, title: lesson.title, description: lesson.description, category: lesson.category }))}
             >
               {lessons.map((lesson) => (

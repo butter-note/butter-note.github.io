@@ -31,6 +31,7 @@ export default function ArticlesPage() {
           <CatalogBrowser
             label="아티클"
             listClassName="guide-list"
+            pageSize={6}
             items={posts.map((post) => ({ id: post.slug, title: post.title, description: post.description, category: post.category }))}
           >
             {posts.map((post) => (

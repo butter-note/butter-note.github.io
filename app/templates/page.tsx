@@ -32,6 +32,7 @@ export default function TemplatesPage() {
             <CatalogBrowser
               label="템플릿"
               listClassName="template-gallery"
+              pageSize={9}
               showMarketplaceFilter
               items={templates.map((item) => ({ id: item.id, title: item.name, description: item.description, category: item.category, marketplaces: item.listings.map((listing) => listing.marketplace) }))}
             >
