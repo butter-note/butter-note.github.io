@@ -6,8 +6,8 @@ import { getPosts } from '@/lib/posts';
 import { CatalogBrowser } from '@/components/catalog-browser';
 
 export const metadata: Metadata = {
-  title: '노션 가이드(아티클) | 버터노트',
-  description: '노션을 처음 쓰는 팀을 위한 가이드와 일하는 방식에 관한 버터노트의 아티클을 만나보세요.',
+  title: '노션 블로그 | 버터노트',
+  description: '노션을 처음 쓰는 팀을 위한 사용법과 일하는 방식을 버터노트의 노션 블로그에서 만나보세요.',
 };
 
 export default function ArticlesPage() {
@@ -19,8 +19,8 @@ export default function ArticlesPage() {
       <section className="guides-hero">
         <div className="site-container guides-hero-grid">
           <div>
-            <p className="eyebrow"><span /> NOTION GUIDE &amp; ARTICLE</p>
-            <h1>노션 가이드와 아티클을<br />한곳에서 만나보세요.</h1>
+            <p className="eyebrow"><span /> NOTION BLOG</p>
+            <h1>노션 블로그</h1>
             <p>처음 시작하는 사용법부터 팀의 기록과 협업을 설계하는 방법까지, 버터노트의 언어로 쉽게 전합니다.</p>
           </div>
           <img src="/brand/characters/paper.png" alt="문서를 읽고 있는 버터노트 캐릭터" />
@@ -29,7 +29,7 @@ export default function ArticlesPage() {
       <section className="guides-list-section">
         <div className="site-container">
           <CatalogBrowser
-            label="아티클"
+            label="게시글"
             listClassName="guide-list"
             pageSize={6}
             items={posts.map((post) => ({ id: post.slug, title: post.title, description: post.description, category: post.category }))}

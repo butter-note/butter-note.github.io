@@ -125,8 +125,8 @@ test('escaped attributes and indented Markdown code remain literal', () => {
   assert.ok(render('    {color="red"}', { flavor: 'markdown' }).includes('{color=&quot;red&quot;}'));
 });
 
-test('the existing five-things sample is styled without writing extra sections', () => {
-  const source = readFileSync(new URL('../content/posts/notion-first-steps.md', import.meta.url), 'utf8');
+test('the unpublished five-things fixture is styled without writing extra sections', () => {
+  const source = readFileSync(new URL('./fixtures/notion-first-steps.md', import.meta.url), 'utf8');
   const html = render(source, { title: '노션을 처음 켰을 때 가장 먼저 알아야 할 5가지', flavor: 'markdown' });
   assert.equal((html.match(/<h2[^>]*>[1-5]\. /g) ?? []).length, 3);
   assert.ok(html.includes('오늘 바로 해볼 일') && html.includes('다음 단계'));

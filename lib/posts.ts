@@ -39,5 +39,12 @@ export function getPosts(): Post[] {
 export function getPostBySlug(slug: string): Post | undefined {
   return getPosts().find((post) => post.slug === slug);
 }
+
+export function getPostStaticParams() {
+  const params = getPosts().map((post) => ({ slug: post.slug }));
+  // Static export requires a path even for an empty CMS. Both detail routes
+  // render notFound() for this unlinked placeholder; it is never a post.
+  return params.length ? params : [{ slug: '__empty__' }];
+}
 import fs from 'node:fs';
 import path from 'node:path';

@@ -31,7 +31,7 @@ export default function Home() {
             <p className="hand-note">처음이어도 괜찮아요. 버터노트가 함께할게요!</p>
             <div className="hero-actions">
               <a className="button" href="/articles">
-                노션 가이드 보기 <ArrowRight aria-hidden="true" size={18} />
+                노션 블로그 보기 <ArrowRight aria-hidden="true" size={18} />
               </a>
               <a className="button button-secondary" href="/services">
                 교육·구축 상담하기

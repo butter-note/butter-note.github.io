@@ -5,12 +5,12 @@ import { notFound } from 'next/navigation';
 import { NotionMarkdown } from '@/components/notion-markdown';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
-import { getPostBySlug, getPosts } from '@/lib/posts';
+import { getPostBySlug, getPostStaticParams } from '@/lib/posts';
 
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getPosts().map((post) => ({ slug: post.slug }));
+  return getPostStaticParams();
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = getPostBySlug(slug);
 
   if (!post) {
-    return { title: '아티클을 찾을 수 없습니다 | 버터노트' };
+    return { title: '게시글을 찾을 수 없습니다 | 버터노트' };
   }
 
   return {
@@ -51,7 +51,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <SiteHeader />
       <article className="article-page">
         <header className="article-header site-container">
-          <Link className="article-back" href="/articles"><ArrowLeft aria-hidden="true" size={17} /> 노션 가이드(아티클)로 돌아가기</Link>
+          <Link className="article-back" href="/articles"><ArrowLeft aria-hidden="true" size={17} /> 노션 블로그로 돌아가기</Link>
           <span className="category-pill active">{post.category}</span>
           <h1>{post.title}</h1>
           <p>{post.description}</p>

@@ -12,7 +12,7 @@
 | --- | --- |
 | items | id, title, description, category, 선택적 marketplaces |
 | children | items와 같은 순서의 카드 배열 |
-| label | 아티클 / 무료 강의 / 템플릿 |
+| label | 게시글 / 무료 강의 / 템플릿 |
 | listClassName | 기존 guide-list / lessons-grid / template-gallery |
 | showMarketplaceFilter | 판매처 필터 표시, 기본 false |
 | pageSize | 페이지당 개수, 기본 6. 아티클·무료 강의 6, 템플릿 9 |

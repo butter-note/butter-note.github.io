@@ -62,7 +62,7 @@ export default function LecturesPage() {
               <img src="/brand/characters/paper.png" alt="강의를 준비하는 버터노트 캐릭터" />
               <h3>첫 무료 강의를 준비하고 있어요.</h3>
               <p>강의가 공개되면 이곳에서 바로 볼 수 있어요.</p>
-              <a className="button button-secondary" href="/articles/">노션 가이드 먼저 읽기</a>
+              <a className="button button-secondary" href="/articles/">노션 블로그 먼저 읽기</a>
             </div>
           )}
           {hasOriginalLink && <p className="lessons-help">재생이 되지 않으면 ‘원본 영상 보기’를 눌러주세요. 영상은 각 제공 서비스의 플레이어에서 재생됩니다.</p>}
