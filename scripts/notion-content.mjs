@@ -6,6 +6,16 @@ export function selectName(property) {
   return (property?.status?.name ?? property?.select?.name ?? '').trim();
 }
 
+function propertyUrl(property) {
+  const direct = (property?.url ?? richText(property)).trim();
+  if (direct) return direct;
+  // Notion's Files & media property also stores "Embed link" entries as external URLs.
+  const files = [...new Set((property?.files ?? []).map((file) => file.external?.url ?? file.file?.url ?? '').filter(Boolean))];
+  if (files.length === 1) return files[0];
+  const playable = files.filter((url) => ['iframe', 'video'].includes(getVideoEmbed(url).kind));
+  return playable.length === 1 ? playable[0] : '';
+}
+
 export function partitionPublishedContent(pages) {
   const articles = [];
   const videos = [];
@@ -22,7 +32,7 @@ export function partitionPublishedContent(pages) {
 export function videoFromPage(page) {
   const p = page.properties ?? {};
   const videoUrl = [p.URL, p['영상 URL'], p.VideoURL]
-    .map((property) => (property?.url ?? richText(property)).trim())
+    .map(propertyUrl)
     .find(Boolean) ?? '';
   return {
     id: page.id,

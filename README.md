@@ -53,7 +53,7 @@ GitHub 저장소의 Actions secrets에 `NOTION_API_KEY`, `NOTION_DATA_SOURCE_ID`
 | 이름 / 제목 (Name / Title) | 제목 | 강의 제목 |
 | 상태 (Status) | 상태 또는 선택 | `발행` (또는 `Published`) |
 | 형식 (Format) | 선택 | `영상` (또는 `Video`) |
-| URL | URL | 영상 주소. iframe 코드 대신 URL만 입력 |
+| URL | URL 또는 파일과 미디어 | 영상 주소. 파일과 미디어의 ‘링크 임베드’도 지원. iframe 코드 대신 URL만 입력 |
 | 요약 (Description) | 텍스트 | 선택: 영상 아래 설명 |
 | 카테고리 (Category) | 선택 | 선택: 강의 분류 |
 | 발행일 (Date) | 날짜 | 선택: 비어 있으면 생성일 사용 |

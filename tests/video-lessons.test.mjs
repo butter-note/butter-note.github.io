@@ -92,3 +92,16 @@ test('video links and native Notion video blocks in the body are recognized and 
   assert.deepEqual(videoUrlsInMarkdown(`https://www.notion.so/page\n${url}\nhttps://youtu.be/M7lc1UVf-VE`), [url, 'https://youtu.be/M7lc1UVf-VE']);
   assert.deepEqual(videoUrlsInMarkdown('설명만 있는 영상 페이지\nhttps://example.com/'), []);
 });
+
+test('the actual Notion URL Files & media property reads an embedded external YouTube link', () => {
+  const url = 'https://youtu.be/GVBXtqWP4E4?si=5AnWOBCDQXydUONa';
+  const item = videoFromPage(page('actual-format', { URL: { type: 'files', files: [{ name: url, type: 'external', external: { url } }] } }));
+  assert.equal(item.url, url);
+  assert.equal(getVideoEmbed(item.url).src, 'https://www.youtube-nocookie.com/embed/GVBXtqWP4E4?playsinline=1');
+});
+
+test('Files & media supports uploaded video and does not choose between multiple videos', () => {
+  const file = (url) => ({ type: 'file', file: { url } });
+  assert.equal(videoFromPage(page('upload', { URL: { files: [file('https://cdn.example.com/lesson.mp4?token=example')] } })).url, 'https://cdn.example.com/lesson.mp4?token=example');
+  assert.equal(videoFromPage(page('ambiguous', { URL: { files: [file('https://cdn.example.com/one.mp4'), file('https://cdn.example.com/two.mp4')] } })).url, '');
+});

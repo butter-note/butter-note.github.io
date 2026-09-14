@@ -4,7 +4,9 @@ const page = (id, format, status) => ({
   object: 'page', id, created_time: '2026-09-14T09:00:00Z', url: `https://www.notion.so/${id}`,
   properties: {
     이름: { title: [{ plain_text: id }] }, 상태: select(status), 형식: select(format),
-    Slug: text(id), URL: { url: process.env.NOTION_FIXTURE_BODY === '1' && format === '영상' ? null : 'https://youtu.be/M7lc1UVf-VE' },
+    Slug: text(id), URL: format === '영상'
+      ? { type: 'files', files: process.env.NOTION_FIXTURE_BODY === '1' ? [] : [{ type: 'external', external: { url: 'https://youtu.be/M7lc1UVf-VE' } }] }
+      : { url: 'https://youtu.be/M7lc1UVf-VE' },
   },
 });
 
