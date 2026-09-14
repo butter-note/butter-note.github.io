@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { localizeImages } from './article-images.mjs';
 
 function envValue(name) {
   const value = (process.env[name] ?? '').trim().replace(/^\uFEFF/, '');
@@ -73,27 +74,6 @@ function characterFor(category) {
   if (category.includes('템플릿')) return '/brand/characters/paper.png';
   if (category.includes('자동화')) return '/brand/characters/sparkle.png';
   return '/brand/characters/question.png';
-}
-
-async function localizeImages(markdown, slug) {
-  const matches = [...markdown.matchAll(/!\[([^\]]*)\]\((https?:\/\/[^)]+)\)/g)];
-  if (!matches.length) return markdown;
-
-  const publicDir = path.resolve('public', 'content', slug);
-  await mkdir(publicDir, { recursive: true });
-  let localized = markdown;
-
-  for (const [index, match] of matches.entries()) {
-    const response = await fetch(match[2]);
-    if (!response.ok) throw new Error(`이미지를 내려받지 못했습니다: ${match[2]}`);
-    const type = response.headers.get('content-type') ?? 'image/jpeg';
-    const extension = type.includes('png') ? 'png' : type.includes('webp') ? 'webp' : type.includes('gif') ? 'gif' : 'jpg';
-    const fileName = `image-${index + 1}.${extension}`;
-    await writeFile(path.join(publicDir, fileName), Buffer.from(await response.arrayBuffer()));
-    localized = localized.replace(match[2], `/content/${slug}/${fileName}`);
-  }
-
-  return localized;
 }
 
 async function queryPublishedPages() {
