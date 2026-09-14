@@ -160,7 +160,16 @@ for (const video of videos) {
     }
   }
   const embed = getVideoEmbed(video.url);
-  if (embed.kind === 'missing' || embed.kind === 'link') console.warn(`영상 임베드 확인 필요: ${video.id} (${video.url ? embed.kind : 'URL 비어 있음'})`);
+  if (embed.kind === 'missing' || embed.kind === 'link') {
+    console.warn(`영상 임베드 확인 필요: ${video.id} (${video.url ? embed.kind : 'URL 비어 있음'})`);
+    if (!video.url) {
+      const properties = videoPages.find((page) => page.id === video.id)?.properties ?? {};
+      // Diagnostic schema only: never log actual property values or signed URL parameters.
+      console.warn(`영상 속성 구조: ${JSON.stringify(Object.entries(properties).map(([name, property]) => ({
+        name, type: property.type, hasUrl: Boolean(property.url), hasText: Boolean(richText(property)),
+      })))}`);
+    }
+  }
 }
 const videosDir = path.resolve('content', 'videos');
 await mkdir(videosDir, { recursive: true });
