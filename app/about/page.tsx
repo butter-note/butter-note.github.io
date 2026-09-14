@@ -12,11 +12,11 @@ export default function AboutPage() {
   return (
     <main>
       <SiteHeader />
-      <section className="subpage-hero">
+      <section className="subpage-hero about-hero">
         <div className="site-container subpage-hero-grid">
           <div>
             <p className="eyebrow"><span /> ABOUT BUTTER NOTE</p>
-            <h1>도구를 넘어,<br />팀의 좋은 습관을 만듭니다.</h1>
+            <h1 className="about-title">도구를 넘어,<br /><span>팀의 좋은 습관을</span>{' '}<span>만듭니다.</span></h1>
             <p>버터노트는 노션이 낯선 사람과 팀을 위해 쉬운 교육과 오래 쓰이는 업무 시스템을 설계합니다.</p>
           </div>
           <div className="subpage-character-card">
