@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { getVideoEmbed } from '../lib/video-embed.mjs';
+import { getVideoEmbed, getVideoPlayerAssets } from '../lib/video-embed.mjs';
 import { partitionPublishedContent, videoFromPage, videoUrlsInMarkdown } from '../scripts/notion-content.mjs';
 
 const select = (name) => ({ select: { name } });
@@ -104,4 +104,21 @@ test('Files & media supports uploaded video and does not choose between multiple
   const file = (url) => ({ type: 'file', file: { url } });
   assert.equal(videoFromPage(page('upload', { URL: { files: [file('https://cdn.example.com/lesson.mp4?token=example')] } })).url, 'https://cdn.example.com/lesson.mp4?token=example');
   assert.equal(videoFromPage(page('ambiguous', { URL: { files: [file('https://cdn.example.com/one.mp4'), file('https://cdn.example.com/two.mp4')] } })).url, '');
+});
+
+test('modal assets use a YouTube poster and a separate user-activated autoplay URL', () => {
+  const assets = getVideoPlayerAssets('https://youtu.be/GVBXtqWP4E4?t=90');
+  assert.equal(assets.poster, 'https://i.ytimg.com/vi/GVBXtqWP4E4/hqdefault.jpg');
+  assert.equal(new URL(assets.playbackSrc).searchParams.get('autoplay'), '1');
+  assert.equal(new URL(assets.playbackSrc).searchParams.get('start'), '90');
+  assert.ok(!assets.src.includes('autoplay'));
+});
+
+test('modal playback preserves Vimeo privacy hashes and direct file URLs, but not unsafe links', () => {
+  const vimeo = getVideoPlayerAssets('https://vimeo.com/123456789/abcdef1234');
+  assert.equal(new URL(vimeo.playbackSrc).searchParams.get('h'), 'abcdef1234');
+  assert.equal(new URL(vimeo.playbackSrc).searchParams.get('autoplay'), '1');
+  assert.equal(vimeo.poster, undefined);
+  assert.equal(getVideoPlayerAssets('https://cdn.example.com/lesson.mp4').playbackSrc, 'https://cdn.example.com/lesson.mp4');
+  assert.equal(getVideoPlayerAssets('javascript:alert(1)').playbackSrc, undefined);
 });

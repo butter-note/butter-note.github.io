@@ -32,7 +32,7 @@ export default function LecturesPage() {
         <div className="site-container">
           <div className="lessons-toolbar">
             <h2 id="lessons-title"><PlaySquare size={20} aria-hidden="true" /> 무료 강의 <span>{lessons.length}개</span></h2>
-            {hasPlayableVideo && <p>재생 버튼을 눌러 바로 시작하세요.</p>}
+            {hasPlayableVideo && <p>영상을 누르면 큰 화면으로 볼 수 있어요.</p>}
           </div>
           {lessons.length ? (
             <div className="lessons-grid">

@@ -353,8 +353,25 @@ footer { padding: 28px 0; border-top: 1px solid var(--border); background: #fff;
 .lessons-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; }
 .lesson-card { min-width: 0; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 14px; background: #fff; }
 .lesson-player { width: 100%; aspect-ratio: 16 / 9; min-height: 200px; background: var(--cream); border-bottom: 1px solid var(--border); }
-.lesson-player iframe, .lesson-player video { display: block; width: 100%; height: 100%; min-height: 200px; border: 0; }
-.lesson-player video { background: #111; }
+.lesson-play-trigger { position: relative; display: grid; place-items: center; width: 100%; height: 100%; min-height: 200px; padding: 0; border: 0; cursor: pointer; overflow: hidden; background: var(--cream); }
+.lesson-play-trigger::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 20%, rgba(0,0,0,.55)); }
+.lesson-video-thumbnail { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .2s ease; }
+.lesson-video-placeholder { color: var(--brown); font-family: var(--font-display); font-size: 28px; opacity: .5; }
+.lesson-enlarge-label { position: absolute; right: 16px; bottom: 14px; z-index: 1; display: flex; align-items: center; gap: 7px; color: #fff; font-size: 13px; font-weight: 700; }
+.lesson-play-trigger:hover .lesson-video-thumbnail { transform: scale(1.03); }
+.lesson-play-trigger:focus-visible { outline: 4px solid var(--butter); outline-offset: -5px; }
+.video-dialog-backdrop { position: fixed; inset: 0; z-index: 100; background: rgba(17,16,15,.8); backdrop-filter: blur(4px); }
+.video-dialog { position: fixed; top: 50%; left: 50%; z-index: 101; transform: translate(-50%, -50%); width: min(1100px, calc(100vw - 32px), calc((100dvh - 170px) * 16 / 9)); max-height: calc(100dvh - 24px); overflow: auto; overscroll-behavior: contain; border: 1px solid var(--border); border-radius: 16px; background: var(--paper); box-shadow: 0 30px 100px rgba(0,0,0,.4); outline: none; }
+.video-dialog-header { display: flex; align-items: center; gap: 16px; padding: 16px 18px; }
+.video-dialog-title { flex: 1; min-width: 0; max-height: 4.5em; overflow: auto; margin: 0; font-family: var(--font-display); font-size: 19px; line-height: 1.5; font-weight: 400; overflow-wrap: anywhere; }
+.video-dialog-close { display: grid; flex: 0 0 auto; place-items: center; width: 44px; height: 44px; border: 1px solid var(--border); border-radius: 50%; background: #fff; color: #111; cursor: pointer; }
+.video-dialog-close:hover { background: var(--butter); }
+.video-dialog-player { width: 100%; aspect-ratio: 16 / 9; min-height: 200px; background: #000; }
+.video-dialog-player iframe, .video-dialog-player video { display: block; width: 100%; height: 100%; min-height: 200px; border: 0; }
+.video-dialog-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 18px; color: var(--brown); font-size: 13px; }
+.video-dialog-footer p { margin: 0; }
+.video-dialog-footer a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.video-dialog-close:focus-visible, .video-dialog-footer a:focus-visible { outline: 3px solid var(--brown); outline-offset: 3px; }
 .lesson-player-message { min-height: 200px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center; color: var(--brown); }
 .lesson-player-message p { margin: 0; font-size: 14px; line-height: 1.7; }
 .lesson-copy { flex: 1; display: flex; flex-direction: column; padding: 25px; }
@@ -380,6 +397,9 @@ footer { padding: 28px 0; border-top: 1px solid var(--border); background: #fff;
   .lessons-grid { grid-template-columns: minmax(0, 1fr); }
   .lesson-copy { padding: 20px; }
   .lessons-section { padding-bottom: 64px; }
+  .video-dialog-header { padding: 12px; gap: 10px; }
+  .video-dialog-title { font-size: 16px; }
+  .video-dialog-footer { padding: 6px 12px; font-size: 12px; }
 }
 
 @media (max-width: 900px) {
