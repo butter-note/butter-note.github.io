@@ -5,7 +5,8 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '*/10 * * * *'
+    # 매시 9분부터 10분 간격으로 실행해 GitHub Actions 정각 혼잡을 피합니다.
+    - cron: '9-59/10 * * * *'
 
 permissions:
   contents: read
