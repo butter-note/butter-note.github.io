@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { ArrowLeft, Mail } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { NotionMarkdown } from '@/components/notion-markdown';
@@ -50,14 +51,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <SiteHeader />
       <article className="article-page">
         <header className="article-header site-container">
-          <a className="article-back" href="/articles"><ArrowLeft aria-hidden="true" size={17} /> 노션 가이드(아티클)로 돌아가기</a>
+          <Link className="article-back" href="/articles"><ArrowLeft aria-hidden="true" size={17} /> 노션 가이드(아티클)로 돌아가기</Link>
           <span className="category-pill active">{post.category}</span>
           <h1>{post.title}</h1>
           <p>{post.description}</p>
-          <div className="article-meta">{post.date.replaceAll('-', '. ')} · {post.readTime} 읽기</div>
+          <div className="article-detail-meta">{post.date.replaceAll('-', '. ')} · {post.readTime} 읽기</div>
         </header>
         <div className="article-body site-container">
-          <NotionMarkdown content={post.content} />
+          <NotionMarkdown content={post.content} title={post.title} />
         </div>
       </article>
       <section className="article-contact">

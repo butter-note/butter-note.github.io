@@ -32,6 +32,8 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: npm ci
+      - name: Test article rendering
+        run: npm test
       - name: Sync Notion articles
         env:
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
