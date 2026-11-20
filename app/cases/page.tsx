@@ -2,23 +2,32 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
-import { SiteHeader } from '@/components/site-header';
-import { SiteFooter } from '@/components/site-footer';
 import { BlogNav } from '@/components/blog-nav';
 import { BusinessContact } from '@/components/business-contact';
 import { CatalogBrowser } from '@/components/catalog-browser';
+import { JsonLd } from '@/components/json-ld';
+import { SiteFooter } from '@/components/site-footer';
+import { SiteHeader } from '@/components/site-header';
 import { getCaseStudies } from '@/lib/business-content';
+import { pageMetadata } from '@/lib/seo';
+import { pages } from '@/lib/site';
+import { collectionSchema } from '@/lib/structured-data';
 
-export const metadata: Metadata = {
-  title: '노션 구축 사례 | 버터노트',
-  description: '팀의 업무를 살펴보고 노션 시스템으로 정리한 과정을 소개합니다.',
-};
+export const metadata: Metadata = pageMetadata(pages.cases);
 
 export default function CasesPage() {
   const cases = getCaseStudies();
   return (
     <main>
       <SiteHeader />
+      <JsonLd
+        data={collectionSchema({
+          name: pages.cases.label,
+          description: pages.cases.description,
+          path: pages.cases.path,
+          items: cases.map((entry) => ({ name: entry.title, path: `/cases/${entry.slug}/` })),
+        })}
+      />
       <section className="guides-hero business-hero">
         <div className="site-container guides-hero-grid">
           <div>

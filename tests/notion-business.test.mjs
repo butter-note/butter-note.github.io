@@ -111,6 +111,32 @@ test('unfinished published entries are skipped without blocking valid content or
   assert.ok(!JSON.stringify(warnings).includes('절대 노출'));
 });
 
+test('dated cases without a story stay as schedule items with allowlisted event details', async () => {
+  const warnings = [];
+  const event = page('event', {
+    일정: { type: 'date', date: { start: '2026-12-05T14:00:00.000+09:00', end: '2026-12-05T16:00:00.000+09:00', time_zone: null } },
+    방식: { type: 'select', select: { name: '오프라인' } },
+    장소: rich('춘천'),
+    대상: rich('교직원 30명'),
+    '신청 링크': { type: 'url', url: 'https://forms.example.com/apply' },
+  });
+  const unsafe = page('unsafe', { 발행일: { type: 'date', date: { start: '2026-12-10', end: null } }, '신청 링크': { type: 'url', url: 'javascript:alert(1)' } });
+  const textDate = page('text-date', { 일정: rich('12월 중'), 발행일: { type: 'date', date: { start: '2026-12-12', end: null } } });
+  const { request } = fixture({ cases: [event, unsafe, textDate, page('undated')], faqs: [], body: '' });
+  const result = await collectBusinessContent({ request, config, warn: (message) => warnings.push(message) });
+  assert.deepEqual(result.cases.map((entry) => entry.id).sort((a, b) => a.localeCompare(b)), ['event', 'text-date', 'unsafe']);
+  const saved = result.cases.find((entry) => entry.id === 'event');
+  assert.equal(saved.content, '');
+  assert.deepEqual(saved.schedule, { start: '2026-12-05T14:00:00.000+09:00', end: '2026-12-05T16:00:00.000+09:00' });
+  assert.equal(saved.date, '2026-12-05');
+  assert.deepEqual([saved.mode, saved.location, saved.audience, saved.registrationUrl], ['오프라인', '춘천', '교직원 30명', 'https://forms.example.com/apply']);
+  assert.equal(result.cases.find((entry) => entry.id === 'unsafe').registrationUrl, '', 'non-web links never become buttons');
+  assert.equal(result.cases.find((entry) => entry.id === 'text-date').date, '2026-12-12', 'a text 일정 column falls back to the date column');
+  assert.equal(warnings.length, 1, 'only the undated empty entry is skipped');
+  assert.match(warnings[0], /본문이 비어/);
+  assert.ok(!JSON.stringify(result).includes('절대 노출'));
+});
+
 test('missing title schema and incomplete API responses still block deployment', async () => {
   await assert.rejects(collectBusinessContent({ request: fixture({ cases: [page('missing-title', { 제목: rich('not a title') })] }).request, config }), /제목 속성을 읽지 못/);
   await assert.rejects(collectBusinessContent({ request: fixture({ broken: true }).request, config }), /불완전/);

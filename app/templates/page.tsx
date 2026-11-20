@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
 import { ArrowUpRight, Database, ExternalLink } from 'lucide-react';
+import { CatalogBrowser } from '@/components/catalog-browser';
+import { JsonLd } from '@/components/json-ld';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
+import { pageMetadata } from '@/lib/seo';
+import { pages } from '@/lib/site';
+import { templateListSchema } from '@/lib/structured-data';
 import { getTemplates } from '@/lib/templates';
-import { CatalogBrowser } from '@/components/catalog-browser';
 
-export const metadata: Metadata = {
-  title: '노션 템플릿 | 버터노트',
-  description: '버터노트의 노션 템플릿과 판매처를 갤러리에서 한눈에 확인하세요.',
-};
+export const metadata: Metadata = pageMetadata(pages.templates);
 
 export default function TemplatesPage() {
   const templates = getTemplates();
@@ -16,6 +17,7 @@ export default function TemplatesPage() {
   return (
     <main>
       <SiteHeader />
+      <JsonLd data={templateListSchema(templates)} />
       <section className="templates-hero">
         <div className="site-container templates-hero-grid">
           <div><p className="eyebrow"><span /> BUTTER NOTE TEMPLATE</p><h1>바로 써보고,<br />우리 방식으로 다듬어요.</h1><p>버터노트가 만든 노션 템플릿과 구매할 수 있는 판매처를 한곳에 모았습니다.</p></div>
@@ -37,7 +39,7 @@ export default function TemplatesPage() {
               items={templates.map((item) => ({ id: item.id, title: item.name, description: item.description, category: item.category, marketplaces: item.listings.map((listing) => listing.marketplace) }))}
             >
               {templates.map((item) => (
-                <article className="template-card" key={item.id}>
+                <article className="template-card" key={item.id} id={`template-${item.slug}`}>
                   <div className="template-cover"><img src={item.cover} alt="" aria-hidden="true" />{item.featured && <span>추천</span>}</div>
                   <div className="template-card-body">
                     <div className="template-card-meta"><span>{item.category}</span><span className={`status status-${item.status.includes('준비') || item.status === '기획' ? 'soon' : 'live'}`}>{item.status}</span></div>

@@ -1,25 +1,36 @@
 import type { Metadata } from 'next';
+import { JsonLd } from '@/components/json-ld';
+import { analytics, claritySnippet, googleAnalyticsSnippet } from '@/lib/analytics';
+import { feedAlternates, pageMetadata } from '@/lib/seo';
+import { absoluteUrl, pages, site } from '@/lib/site';
+import { siteGraph } from '@/lib/structured-data';
 import './globals.css';
 
 const googleTagManagerId = 'GTM-TV4D6VBX';
 
+const verification = {
+  ...(site.verification.google ? { google: site.verification.google } : {}),
+  ...(site.verification.naver ? { other: { 'naver-site-verification': site.verification.naver } } : {}),
+};
+
+// Defaults for every page; pages replace title, description, canonical and share cards via pageMetadata().
 export const metadata: Metadata = {
-  metadataBase: new URL('https://butter-note.github.io'),
-  title: '버터노트 | 노션 교육과 시스템 구축',
-  description: '노션이 처음인 팀도 부드럽게 적응하도록 돕는 교육과 시스템 구축 스튜디오, 버터노트입니다.',
-  openGraph: {
-    title: '버터노트 | 노션 교육과 시스템 구축',
-    description: '낯선 노션을, 우리 팀의 일하는 방식으로.',
-    type: 'website',
-    locale: 'ko_KR',
-    images: [{ url: '/og.png', width: 1200, height: 630, alt: '버터노트' }],
+  ...pageMetadata(pages.home),
+  metadataBase: new URL(site.url),
+  applicationName: site.name,
+  authors: [{ name: site.name, url: absoluteUrl('/about/') }],
+  creator: site.name,
+  publisher: site.name,
+  keywords: site.keywords,
+  // No canonical here: it would be inherited by pages that do not set their own.
+  alternates: { types: feedAlternates },
+  // Allow full-length snippets and large previews so answer engines and search results can quote the content.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-snippet': -1, 'max-image-preview': 'large', 'max-video-preview': -1 },
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: '버터노트 | 노션 교육과 시스템 구축',
-    description: '낯선 노션을, 우리 팀의 일하는 방식으로.',
-    images: ['/og.png'],
-  },
+  ...(Object.keys(verification).length ? { verification } : {}),
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -37,6 +48,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           }}
         />
         {/* End Google Tag Manager */}
+        {analytics.googleAnalyticsId ? (
+          <>
+            {/* Google Analytics 4 */}
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${analytics.googleAnalyticsId}`} />
+            <script dangerouslySetInnerHTML={{ __html: googleAnalyticsSnippet(analytics.googleAnalyticsId) }} />
+          </>
+        ) : null}
+        {analytics.clarityProjectId ? (
+          /* Microsoft Clarity */
+          <script dangerouslySetInnerHTML={{ __html: claritySnippet(analytics.clarityProjectId) }} />
+        ) : null}
       </head>
       <body>
         {/* Google Tag Manager (noscript) */}
@@ -50,6 +72,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           />
         </noscript>
         {/* End Google Tag Manager (noscript) */}
+        <JsonLd data={siteGraph()} />
         {children}
       </body>
     </html>

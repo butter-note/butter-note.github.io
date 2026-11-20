@@ -4,9 +4,14 @@ import {
   Check,
   Mail,
 } from 'lucide-react';
+import { NextEvent } from '@/components/next-event';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
-import { getPosts } from '@/lib/posts';
+import { getPosts, postSummary } from '@/lib/posts';
+import { pageMetadata } from '@/lib/seo';
+import { pages } from '@/lib/site';
+
+export const metadata = pageMetadata(pages.home);
 
 export default function Home() {
   const articles = getPosts().slice(0, 3);
@@ -30,10 +35,10 @@ export default function Home() {
             </p>
             <p className="hand-note">처음이어도 괜찮아요. 버터노트가 함께할게요!</p>
             <div className="hero-actions">
-              <a className="button" href="/articles">
+              <a className="button" href="/articles/">
                 노션 블로그 보기 <ArrowRight aria-hidden="true" size={18} />
               </a>
-              <a className="button button-secondary" href="/services">
+              <a className="button button-secondary" href="/services/">
                 교육·구축 상담하기
               </a>
             </div>
@@ -74,6 +79,8 @@ export default function Home() {
         </div>
       </section>
 
+      <NextEvent />
+
       <section className="guide-section" id="guides">
         <div className="site-container">
           <div className="section-heading">
@@ -82,20 +89,20 @@ export default function Home() {
               <h2>처음이라면, 여기부터</h2>
               <p>노션의 낯선 기능을 실제 업무의 언어로 설명합니다.</p>
             </div>
-            <a className="arrow-link" href="/articles">
+            <a className="arrow-link" href="/articles/">
               모든 글 보기 <ArrowRight aria-hidden="true" size={17} />
             </a>
           </div>
 
           <div className="article-grid">
             {articles.map((article) => (
-              <a className="article-card" href={`/articles/${article.slug}`} key={article.title}>
+              <a className="article-card" href={`/articles/${article.slug}/`} key={article.slug}>
                 <div className="article-topline">
                   <span className="category-pill">{article.category}</span>
                   <img src={article.character} alt="" aria-hidden="true" />
                 </div>
                 <h3>{article.title}</h3>
-                <p>{article.description}</p>
+                <p>{postSummary(article)}</p>
                 <div className="article-meta">
                   <span>{article.readTime} 읽기</span>
                   <ArrowRight aria-hidden="true" size={18} />

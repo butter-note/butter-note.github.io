@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
 import { ArrowUpRight, PlaySquare } from 'lucide-react';
+import { CatalogBrowser } from '@/components/catalog-browser';
+import { JsonLd } from '@/components/json-ld';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { VideoPlayer } from '@/components/video-player';
+import { pageMetadata } from '@/lib/seo';
+import { pages } from '@/lib/site';
+import { videoListSchema } from '@/lib/structured-data';
 import { getVideos } from '@/lib/videos';
-import { CatalogBrowser } from '@/components/catalog-browser';
 
-export const metadata: Metadata = {
-  title: '무료 강의 | 버터노트',
-  description: '노션이 처음이라면 영상으로 차근차근 따라 해보세요. 버터노트의 무료 노션 강의를 모았습니다.',
-  alternates: { canonical: '/lectures/' },
-};
+export const metadata: Metadata = pageMetadata(pages.lectures);
 
 export default function LecturesPage() {
   const lessons = getVideos();
@@ -19,6 +19,7 @@ export default function LecturesPage() {
   return (
     <main>
       <SiteHeader />
+      <JsonLd data={videoListSchema(lessons)} />
       <section className="templates-hero">
         <div className="site-container templates-hero-grid">
           <div>

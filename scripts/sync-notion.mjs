@@ -118,6 +118,8 @@ for (const page of pages) {
     description,
     category,
     date,
+    // Freshness signal for sitemap.xml, structured data and the article header.
+    updated: page.last_edited_time?.slice(0, 10) || undefined,
     readTime: `${Math.max(1, Math.ceil(words / 350))}분`,
     character: characterFor(category),
     featured: Boolean(properties.추천?.checkbox ?? properties.Featured?.checkbox),

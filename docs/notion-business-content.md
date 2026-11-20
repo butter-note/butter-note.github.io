@@ -43,7 +43,7 @@ DB에 데이터 소스가 하나면 자동으로 ID를 찾는다. 여러 개라�
 1. 노션에서 작성하고 공개 조건을 설정한다.
 2. 기존 GitHub Pages 배포 작업에서 `npm run sync:notion:business`가 두 DB를 조회한다.
 3. 두 조회가 모두 끝난 후 `content/business/content.json` 스냅샷을 교체한다. 실패 시 이전 스냅샷을 유지하고 배포를 중단한다.
-4. 정적 빌드에서 본문 변환을 검증한 뒤 배포한다. 기존 약 10분 간격 예약에 포함되며, GitHub 실행 대기에 따라 더 늦어질 수 있다.
+4. 정적 빌드에서 본문 변환을 검증한 뒤 배포한다. 매시간(매시 10분) 예약 배포에 포함되며, GitHub 실행 대기에 따라 더 늦어질 수 있다.
 5. `/cases/`, 사례 상세 주소, `/faq/`에서 확인한다. 공개 해제·삭제도 다음 성공한 배포에서 반영된다.
 
 로컬에서는 안전하게 설정한 환경 변수 또는 무시되는 `.env.local`을 사용한다. `.env.local` 사용 시 `node --env-file=.env.local scripts/sync-notion-business.mjs`로 실행한다. `npm run sync:notion:business`는 운영체제 환경 변수를 읽는다. 키를 문서나 코드에 넣지 않는다.

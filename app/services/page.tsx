@@ -1,34 +1,20 @@
 import type { Metadata } from 'next';
 import { ArrowRight, Check, Mail } from 'lucide-react';
+import { JsonLd } from '@/components/json-ld';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
+import { pageMetadata } from '@/lib/seo';
+import { services } from '@/lib/services';
+import { pages } from '@/lib/site';
+import { breadcrumbSchema, servicesSchema } from '@/lib/structured-data';
 
-export const metadata: Metadata = {
-  title: '노션 교육·시스템 구축 | 버터노트',
-  description: '노션 입문 교육부터 팀에 맞는 업무 시스템 설계와 구축, 정착 지원까지 버터노트와 함께하세요.',
-};
-
-const services = [
-  {
-    number: '01',
-    title: '노션 온보딩 교육',
-    description: '노션을 처음 접하는 구성원이 핵심 기능을 익히고 실제 업무를 시작할 수 있도록 돕습니다.',
-    items: ['우리 팀 업무 예시 중심 실습', '기초 기능과 데이터베이스 이해', '공유·협업 규칙 함께 정리'],
-    character: '/brand/characters/sparkle.png',
-  },
-  {
-    number: '02',
-    title: '업무 시스템 설계·구축',
-    description: '흩어진 정보와 반복되는 업무를 살펴보고, 팀에 맞는 노션 워크스페이스로 연결합니다.',
-    items: ['업무 흐름 및 요구사항 인터뷰', '페이지·데이터베이스 구조 설계', '템플릿과 운영 가이드 제공'],
-    character: '/brand/characters/paper.png',
-  },
-];
+export const metadata: Metadata = pageMetadata(pages.services);
 
 export default function ServicesPage() {
   return (
     <main>
       <SiteHeader />
+      <JsonLd data={[servicesSchema(services), breadcrumbSchema([{ name: '홈', path: '/' }, { name: pages.services.label, path: pages.services.path }])]} />
       <section className="subpage-hero service-hero">
         <div className="site-container subpage-hero-grid">
           <div>
@@ -43,7 +29,7 @@ export default function ServicesPage() {
       <section className="service-list-section">
         <div className="site-container service-card-grid">
           {services.map((service) => (
-            <article className="service-card" key={service.number}>
+            <article className="service-card" key={service.number} id={`service-${service.number}`}>
               <div className="service-card-top"><span>{service.number}</span><img src={service.character} alt="" aria-hidden="true" /></div>
               <h2>{service.title}</h2>
               <p>{service.description}</p>

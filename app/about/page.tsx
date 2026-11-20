@@ -1,17 +1,19 @@
 import type { Metadata } from 'next';
 import { ArrowRight, HeartHandshake, Layers3, Sparkles } from 'lucide-react';
+import { JsonLd } from '@/components/json-ld';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
+import { pageMetadata } from '@/lib/seo';
+import { pages } from '@/lib/site';
+import { aboutSchema } from '@/lib/structured-data';
 
-export const metadata: Metadata = {
-  title: '버터노트 소개 | 노션이 팀의 습관이 되도록',
-  description: '노션을 처음 쓰는 사람도 자연스럽게 적응할 수 있도록 교육하고 시스템을 만드는 버터노트를 소개합니다.',
-};
+export const metadata: Metadata = pageMetadata(pages.about);
 
 export default function AboutPage() {
   return (
     <main>
       <SiteHeader />
+      <JsonLd data={aboutSchema()} />
       <section className="subpage-hero about-hero">
         <div className="site-container subpage-hero-grid">
           <div>
@@ -56,7 +58,7 @@ export default function AboutPage() {
         <div className="site-container page-cta-inner">
           <img src="/brand/characters/heart.png" alt="하트를 보내는 버터노트 캐릭터" />
           <div><p className="eyebrow"><span /> WORK WITH US</p><h2>우리 팀의 노션도 부드럽게 시작해볼까요?</h2></div>
-          <a className="button" href="/services">교육·구축 살펴보기 <ArrowRight aria-hidden="true" size={18} /></a>
+          <a className="button" href="/services/">교육·구축 살펴보기 <ArrowRight aria-hidden="true" size={18} /></a>
         </div>
       </section>
       <SiteFooter />

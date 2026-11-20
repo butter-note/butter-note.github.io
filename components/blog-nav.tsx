@@ -3,6 +3,7 @@ import Link from 'next/link';
 const sections = [
   { id: 'articles', href: '/articles/', label: '노션 블로그' },
   { id: 'cases', href: '/cases/', label: '구축 사례' },
+  { id: 'schedule', href: '/schedule/', label: '일정' },
   { id: 'faq', href: '/faq/', label: 'FAQ' },
 ] as const;
 

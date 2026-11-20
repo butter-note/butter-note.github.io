@@ -4,6 +4,26 @@ const publicationNames = ['공개', '홈페이지 공개', '웹 공개', '게시
 const publishedValues = new Set(['발행', '공개', '게시', 'published']);
 const normalize = (name) => name.normalize('NFKC').replace(/\s/g, '').toLowerCase();
 const property = (properties, names) => names.map((name) => Object.entries(properties).find(([key]) => normalize(key) === normalize(name))?.[1]).find(Boolean);
+// The case date is also the schedule date: an entry is an upcoming event until this date passes.
+const caseDateNames = ['일정', '일시', '진행일', '날짜', '발행일', '공개일', 'Date'];
+const textValue = (value) => (['select', 'status'].includes(value?.type) ? selectName(value) : richText(value));
+
+/** Public event details of a case entry. Every field is optional except the date that makes it a schedule item. */
+function caseFields(properties) {
+  const date = caseDateNames.map((name) => property(properties, [name])).find((value) => value?.type === 'date')?.date;
+  const start = date?.start ?? '';
+  const registration = (property(properties, ['신청 링크', '신청 URL', '신청', 'Registration'])?.url ?? '').trim();
+  return {
+    industry: selectName(property(properties, ['업종', 'Industry'])),
+    date: start.slice(0, 10),
+    ...(start ? { schedule: { start, ...(date.end ? { end: date.end } : {}), ...(date.time_zone ? { timeZone: date.time_zone } : {}) } } : {}),
+    mode: selectName(property(properties, ['방식', '진행 방식', 'Format'])),
+    location: textValue(property(properties, ['장소', '지역', 'Location'])),
+    audience: textValue(property(properties, ['대상', '참가 대상', 'Audience'])),
+    // Only web links become buttons; anything else (javascript:, mailto:, typos) is dropped.
+    registrationUrl: /^https?:\/\/\S+$/i.test(registration) ? registration : '',
+  };
+}
 
 export function publicationRules(schema) {
   const rules = Object.entries(schema).filter(([name]) => publicationNames.some((alias) => normalize(alias) === normalize(name)));
@@ -70,10 +90,8 @@ function pageMetadata(page, kind) {
     category,
     order: Number.isFinite(order) ? order : 9999,
     description: richText(property(properties, ['요약', '설명', 'Description'])),
-    ...(kind === 'cases' ? {
-      industry: selectName(property(properties, ['업종', 'Industry'])),
-      date: property(properties, ['발행일', '공개일', 'Date'])?.date?.start?.slice(0, 10) || '',
-    } : {}),
+    ...(page.last_edited_time ? { updated: page.last_edited_time.slice(0, 10) } : {}),
+    ...(kind === 'cases' ? caseFields(properties) : {}),
   };
 }
 
@@ -115,14 +133,16 @@ export async function collectBusinessContent({ request, config, localize = async
         }
         let body = result.markdown;
         if (kind === 'faqs' && !body.trim()) body = answerMarkdown(property(page.properties, ['답변', 'Answer']));
-        if (!body.trim()) {
+        // A dated case without a story is still a public schedule item; it just gets no case page.
+        const scheduleOnly = !body.trim() && kind === 'cases' && Boolean(meta.schedule);
+        if (!body.trim() && !scheduleOnly) {
           warn(`${config[kind].name}: 공개 제외 — 본문${kind === 'faqs' ? '/답변' : ''}이 비어 있습니다 (${page.id}). 노션 원본은 유지됩니다.`);
           continue;
         }
         const slugKey = meta.slug.toLowerCase();
         if (slugs.has(slugKey)) throw new Error(`중복 Slug: ${meta.slug}`);
         slugs.add(slugKey);
-        const content = await localize(body, `${kind}-${page.id.replaceAll('-', '')}`);
+        const content = scheduleOnly ? '' : await localize(body, `${kind}-${page.id.replaceAll('-', '')}`);
         // Deliberate allowlist: never serialize customers, contacts, internal notes or all page properties.
         bundle[kind].push({ ...meta, content, format: 'notion' });
       }

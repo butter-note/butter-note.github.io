@@ -1,24 +1,28 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
-import { SiteHeader } from '@/components/site-header';
-import { SiteFooter } from '@/components/site-footer';
 import { BlogNav } from '@/components/blog-nav';
 import { BusinessContact } from '@/components/business-contact';
 import { CatalogBrowser } from '@/components/catalog-browser';
+import { JsonLd } from '@/components/json-ld';
 import { NotionMarkdown } from '@/components/notion-markdown';
-import { getFaqs } from '@/lib/business-content';
+import { SiteFooter } from '@/components/site-footer';
+import { SiteHeader } from '@/components/site-header';
+import { faqAnswerText, getFaqs } from '@/lib/business-content';
+import { pageMetadata } from '@/lib/seo';
+import { pages } from '@/lib/site';
+import { faqSchema } from '@/lib/structured-data';
 
-export const metadata: Metadata = {
-  title: '자주 묻는 질문 | 버터노트',
-  description: '노션 사용과 버터노트의 교육·시스템 구축에 대해 자주 묻는 질문을 확인해보세요.',
-};
+export const metadata: Metadata = pageMetadata(pages.faq);
 
 export default function FaqPage() {
   const faqs = getFaqs();
+  // Plain answers (no Notion tags) for search and for the FAQPage structured data.
+  const answers = faqs.map((entry) => faqAnswerText(entry));
   return (
     <main>
       <SiteHeader />
+      <JsonLd data={faqSchema(faqs.map((entry, index) => ({ question: entry.title, answer: answers[index], path: `/faq/#faq-${entry.slug}` })))} />
       <section className="guides-hero business-hero">
         <div className="site-container guides-hero-grid">
           <div>
@@ -36,9 +40,9 @@ export default function FaqPage() {
             searchPlaceholder="질문, 답변, 카테고리 검색"
             emptyTitle="궁금한 점이 있으신가요?"
             emptyDescription="자주 묻는 질문을 준비하고 있어요. 먼저 궁금한 점은 이메일로 편하게 문의해주세요."
-            items={faqs.map((entry) => ({ id: entry.id, title: entry.title, description: `${entry.description} ${entry.content}`, category: entry.category }))}>
+            items={faqs.map((entry, index) => ({ id: entry.id, title: entry.title, description: `${entry.description} ${answers[index]}`, category: entry.category }))}>
             {faqs.map((entry) => (
-              <details className="faq-item" key={entry.id}>
+              <details className="faq-item" key={entry.id} id={`faq-${entry.slug}`}>
                 <summary>
                   <span className="faq-question-mark" aria-hidden="true">Q.</span>
                   <span className="faq-question"><span className="category-pill">{entry.category}</span><span>{entry.title}</span></span>

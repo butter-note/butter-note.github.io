@@ -1,9 +1,15 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { extractBlocks, summarize } from './plain-text.ts';
+
 export type PostMeta = {
   slug: string;
   title: string;
   description: string;
   category: string;
   date: string;
+  /** Last edit in Notion (YYYY-MM-DD). */
+  updated?: string;
   readTime: string;
   character: string;
   featured?: boolean;
@@ -46,5 +52,26 @@ export function getPostStaticParams() {
   // render notFound() for this unlinked placeholder; it is never a post.
   return params.length ? params : [{ slug: '__empty__' }];
 }
-import fs from 'node:fs';
-import path from 'node:path';
+
+export const postFlavor = (post: Pick<PostMeta, 'format' | 'notionPageId'>) => post.format ?? (post.notionPageId ? 'notion' : 'markdown');
+
+const sameText = (a: string, b: string) => {
+  const normalize = (value: string) => value.normalize('NFC').replace(/\s+/g, ' ').trim();
+  return normalize(a) === normalize(b);
+};
+
+/** The sync script fills an empty 요약 with the title; that is not a description. */
+export function hasOwnDescription(post: Pick<Post, 'title' | 'description'>) {
+  return Boolean(post.description?.trim()) && !sameText(post.description, post.title);
+}
+
+/** A written description, or the opening of the body. Used for meta descriptions, cards, RSS and llms.txt. */
+export function postSummary(post: Pick<Post, 'title' | 'description' | 'content' | 'format' | 'notionPageId'>) {
+  if (hasOwnDescription(post)) return post.description.trim();
+  return summarize(extractBlocks(post.content, { flavor: postFlavor(post), title: post.title })) || post.title;
+}
+
+/** First localized image in the body, for the share card and structured data. */
+export function firstImage(content: string) {
+  return content.match(/!\[[^\]]*\]\((\/content\/[^)\s]+)\)/)?.[1];
+}

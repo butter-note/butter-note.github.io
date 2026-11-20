@@ -30,6 +30,8 @@ const business = JSON.parse(await readFile(path.resolve('content/business/conten
 for (const kind of ['cases', 'faqs']) {
   if (!Array.isArray(business[kind])) throw new Error(`${kind}: 잘못된 데이터 형식입니다.`);
   for (const entry of business[kind]) {
+    // A dated case without a story is a schedule-only item and has no page to render.
+    if (kind === 'cases' && !entry.content.trim() && entry.schedule) continue;
     try {
       const options = { title: entry.title, flavor: 'notion', idPrefix: `${kind}-${entry.id}` };
       const html = renderToStaticMarkup(createElement(ReactMarkdown, notionMarkdownOptions(entry.content, options)));
@@ -44,5 +46,6 @@ if (failures.length) {
   process.exitCode = 1;
 } else {
   console.log(`총 ${files.length}개 게시글의 원문/웹 본문 변환을 확인했습니다.`);
-  console.log(`구축 사례 ${business.cases.length}개, FAQ ${business.faqs.length}개 본문 변환을 확인했습니다.`);
+  const scheduleOnly = business.cases.filter((entry) => !entry.content.trim() && entry.schedule).length;
+  console.log(`구축 사례 ${business.cases.length - scheduleOnly}개, FAQ ${business.faqs.length}개 본문 변환을 확인했습니다.${scheduleOnly ? ` (본문 없는 일정 ${scheduleOnly}개는 일정 페이지에만 표시)` : ''}`);
 }
