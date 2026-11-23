@@ -29,14 +29,14 @@ export const site = {
   address: '',
 
   // 개인정보처리방침
-  privacyEffectiveDate: '2026-11-20',
+  privacyEffectiveDate: '2026-11-23',
   privacyOfficer: '버터노트 운영자',
   analyticsRetention: '14개월', // Google Analytics 데이터 보존 설정과 같게 유지합니다.
   clarityRetention: '화면 이용 기록은 30일, 히트맵과 표본·즐겨찾기로 지정된 기록은 최대 9개월', // Microsoft Clarity의 보관 정책
   inquiryRetention: '1년', // 문의 처리 완료 후 이메일을 보관하는 기간입니다.
 
   // 이용약관·저작권 안내
-  termsEffectiveDate: '2026-11-16',
+  termsEffectiveDate: '2026-11-23',
 };
 
 export type SitePage = { path: string; label: string; title: string; description: string };
