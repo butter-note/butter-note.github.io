@@ -149,13 +149,52 @@ export function groupByYear(items: ScheduleItem[]) {
   return [...groups.entries()].map(([year, entries]) => ({ year, entries }));
 }
 
-/** Twelve months of one year with how many events start in each and whether any is still ahead. */
-export function yearStrip(items: ScheduleItem[], year: string) {
+const pad = (value: number) => String(value).padStart(2, '0');
+/** "2026-09" */
+export const monthKey = (year: number, month: number) => `${year}-${pad(month)}`;
+
+/** Events touching a calendar month, soonest first. A multi-day event shows in every month it covers. */
+export function eventsInMonth(items: ScheduleItem[], year: number, month: number) {
+  const first = `${monthKey(year, month)}-01`;
+  // "-31" is a safe upper bound for string comparison in every month.
+  const last = `${monthKey(year, month)}-31`;
+  return items
+    .filter((item) => item.startDate <= last && item.endDate >= first)
+    .sort((a, b) => a.startDate.localeCompare(b.startDate) || (a.startTime ?? '').localeCompare(b.startTime ?? '') || a.title.localeCompare(b.title, 'ko'));
+}
+
+/** Twelve months of one year with how many events touch each and whether any is still ahead. */
+export function yearStrip(items: ScheduleItem[], year: string | number) {
   return Array.from({ length: 12 }, (_, index) => {
-    const month = String(index + 1).padStart(2, '0');
-    const inMonth = items.filter((item) => item.startDate.startsWith(`${year}-${month}`));
+    const inMonth = eventsInMonth(items, Number(year), index + 1);
     return { month: index + 1, count: inMonth.length, upcoming: inMonth.some((item) => item.upcoming) };
   });
+}
+
+function monthsCovered(item: ScheduleItem) {
+  const months: string[] = [];
+  let year = Number(item.startDate.slice(0, 4));
+  let month = Number(item.startDate.slice(5, 7));
+  const last = item.endDate.slice(0, 7);
+  for (let key = monthKey(year, month); key <= last; key = monthKey(year, month)) {
+    months.push(key);
+    month += 1;
+    if (month > 12) { month = 1; year += 1; }
+  }
+  return months;
+}
+
+/** The nearest months before and after the given one that have events, across years. */
+export function neighbourMonths(items: ScheduleItem[], year: number, month: number) {
+  const current = monthKey(year, month);
+  const months = [...new Set(items.flatMap(monthsCovered))].sort();
+  return { previous: months.filter((key) => key < current).at(-1), next: months.find((key) => key > current) };
+}
+
+/** Years the calendar can move between: every year with an event, and this year. */
+export function calendarYears(items: ScheduleItem[], today: string) {
+  const years = [Number(today.slice(0, 4)), ...items.flatMap((item) => [Number(item.startDate.slice(0, 4)), Number(item.endDate.slice(0, 4))])];
+  return { min: Math.min(...years), max: Math.max(...years) };
 }
 
 export function calendarLinks(feedUrl: string) {

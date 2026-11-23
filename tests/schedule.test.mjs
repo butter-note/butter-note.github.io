@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { buildIcs, calendarLinks, foldIcsLine, isCasePage, splitSchedule, todayInKorea, toScheduleItems, whenLabel, yearStrip } from '../lib/schedule.ts';
+import { buildIcs, calendarLinks, calendarYears, eventsInMonth, foldIcsLine, isCasePage, monthKey, neighbourMonths, splitSchedule, todayInKorea, toScheduleItems, whenLabel, yearStrip } from '../lib/schedule.ts';
 
 const entry = (id, schedule, overrides = {}) => ({
   id, slug: id, title: `일정 ${id}`, category: '교육', description: '', content: '', date: schedule?.start?.slice(0, 10) ?? '', ...(schedule ? { schedule } : {}), ...overrides,
@@ -54,6 +54,27 @@ test('labels show the weekday, the time and multi-day ranges', () => {
   assert.equal(strip[11].count, 2);
   assert.equal(strip[11].upcoming, true);
   assert.equal(strip[0].count, 0);
+});
+
+test('each month lists every event it touches, and empty months jump to the nearest months with events', () => {
+  const items = toScheduleItems([
+    entry('spring', { start: '2025-04-24' }),
+    entry('long', { start: '2026-09-28', end: '2026-10-02' }),
+    entry('autumn', { start: '2026-10-07T14:00:00+09:00' }),
+    entry('new-year', { start: '2026-12-30', end: '2027-01-02' }),
+    entry('winter', { start: '2027-01-15' }),
+  ], '2026-11-23');
+  assert.deepEqual(eventsInMonth(items, 2026, 10).map((item) => item.id), ['long', 'autumn']);
+  assert.deepEqual(eventsInMonth(items, 2026, 9).map((item) => item.id), ['long']);
+  assert.deepEqual(eventsInMonth(items, 2027, 1).map((item) => item.id), ['new-year', 'winter'], 'events crossing the year show in both years');
+  assert.equal(eventsInMonth(items, 2026, 11).length, 0);
+  assert.deepEqual(neighbourMonths(items, 2026, 11), { previous: '2026-10', next: '2026-12' });
+  assert.deepEqual(neighbourMonths(items, 2025, 4), { previous: undefined, next: '2026-09' });
+  assert.deepEqual(neighbourMonths(items, 2027, 1), { previous: '2026-12', next: undefined });
+  assert.deepEqual(calendarYears(items, '2026-11-23'), { min: 2025, max: 2027 });
+  assert.deepEqual(calendarYears([], '2026-11-23'), { min: 2026, max: 2026 });
+  assert.equal(yearStrip(items, 2026)[9].count, 2);
+  assert.equal(monthKey(2026, 9), '2026-09');
 });
 
 test('the .ics feed is valid iCalendar text', () => {

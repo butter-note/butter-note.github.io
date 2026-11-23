@@ -5,10 +5,11 @@ import { ArrowRight, CalendarPlus, Clock, MapPin, Users } from 'lucide-react';
 import { BlogNav } from '@/components/blog-nav';
 import { BusinessContact } from '@/components/business-contact';
 import { JsonLd } from '@/components/json-ld';
+import { ScheduleCalendar } from '@/components/schedule-calendar';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { getSchedule } from '@/lib/business-content';
-import { calendarLinks, dateBadge, groupByYear, shortDate, todayInKorea, whenLabel, yearStrip, type ScheduleItem } from '@/lib/schedule';
+import { calendarLinks, dateBadge, groupByYear, shortDate, todayInKorea, whenLabel, type ScheduleItem } from '@/lib/schedule';
 import { pageMetadata } from '@/lib/seo';
 import { absoluteUrl, pages, site } from '@/lib/site';
 import { eventSchema } from '@/lib/structured-data';
@@ -52,9 +53,7 @@ function UpcomingCard({ item }: { item: ScheduleItem }) {
 
 export default function SchedulePage() {
   const { upcoming, past } = getSchedule();
-  const year = todayInKorea().slice(0, 4);
-  const months = yearStrip([...upcoming, ...past], year);
-  const currentMonth = Number(todayInKorea().slice(5, 7));
+  const today = todayInKorea();
   const links = calendarLinks(absoluteUrl('/schedule.ics'));
   const events = upcoming.map((item) => eventSchema(item, pages.schedule.path)).filter((event) => event !== null);
 
@@ -85,23 +84,7 @@ export default function SchedulePage() {
             <p className="schedule-feed">캘린더 주소로 직접 추가: <a href={links.feed}>{links.feed}</a></p>
           </div>
 
-          {months.some((month) => month.count > 0) && (
-            <div className="schedule-year">
-              <h2 className="schedule-heading">{year}년 한눈에 보기</h2>
-              <ol className="year-strip">
-                {months.map((month) => (
-                  <li
-                    key={month.month}
-                    className={[month.count ? 'has-event' : '', month.upcoming ? 'is-upcoming' : '', month.month === currentMonth ? 'is-current' : ''].filter(Boolean).join(' ')}
-                  >
-                    <span>{month.month}월</span>
-                    <span className="sr-only">{month.count ? `일정 ${month.count}개` : '일정 없음'}</span>
-                    {month.count > 0 && <i aria-hidden="true" />}
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
+          {upcoming.length + past.length > 0 && <ScheduleCalendar items={[...upcoming, ...past]} today={today} />}
 
           <div className="schedule-block">
             <h2 className="schedule-heading">다가오는 일정</h2>
