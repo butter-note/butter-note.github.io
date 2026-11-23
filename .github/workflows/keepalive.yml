@@ -1,0 +1,54 @@
+name: Keep deploys active
+
+# GitHub는 공개 저장소에서 60일 동안 활동(커밋)이 없으면 예약 워크플로를 끕니다.
+# 노션에서만 글·사례·일정을 고치면 커밋이 생기지 않으므로, 매달 한 번 다음을 점검합니다.
+#  1. 배포 워크플로가 비활동으로 꺼져 있으면 다시 켜고 바로 배포를 시작합니다.
+#     (직접 끈 경우에는 건드리지 않습니다.)
+#  2. 마지막 커밋이 25일 이상 지났으면 빈 커밋을 하나 남겨 60일 기한이 차지 않게 합니다.
+on:
+  schedule:
+    # 매달 1일 12:17 (한국 시간)
+    - cron: '17 3 1 * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/keepalive.yml']
+
+permissions:
+  actions: write
+  contents: write
+
+concurrency:
+  group: keepalive
+  cancel-in-progress: false
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Re-enable the deploy workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          workflow="repos/${GITHUB_REPOSITORY}/actions/workflows/deploy-pages.yml"
+          state=$(gh api "$workflow" --jq .state)
+          echo "deploy-pages.yml: ${state}"
+          if [ "$state" = "disabled_inactivity" ]; then
+            gh api -X PUT "$workflow/enable"
+            gh workflow run deploy-pages.yml --ref main --repo "$GITHUB_REPOSITORY"
+            echo "비활동으로 꺼진 배포 워크플로를 다시 켜고 배포를 시작했습니다."
+          fi
+
+      - name: Keep the repository active
+        run: |
+          days=$(( ($(date +%s) - $(git log -1 --format=%ct)) / 86400 ))
+          echo "마지막 커밋: ${days}일 전"
+          if [ "$days" -ge 25 ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit --allow-empty -m "Keep scheduled deploys active"
+            git push
+          fi

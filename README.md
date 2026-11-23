@@ -11,7 +11,13 @@ npm run dev
 
 ## GitHub Pages 배포
 
-`main` 브랜치에 변경사항을 올리면 GitHub Actions가 정적 사이트를 빌드하고 Pages에 배포합니다.
+`main` 브랜치에 변경사항을 올리면 GitHub Actions가 정적 사이트를 빌드하고 Pages에 배포합니다. 노션 내용을 반영하기 위해 매시간(매시 10분)에도 자동으로 배포합니다.
+
+GitHub는 공개 저장소에서 60일 동안 커밋이 없으면 예약 워크플로를 끄고, 꺼진 워크플로는 `main`에 올려도 실행되지 않습니다. 노션만 고치면 커밋이 생기지 않으므로 `.github/workflows/keepalive.yml`이 매달 1일에 점검합니다.
+
+- 배포 워크플로가 비활동으로 꺼져 있으면 다시 켜고 바로 배포를 시작합니다. 직접 끈 경우는 그대로 둡니다.
+- 마지막 커밋이 25일 이상 지났으면 빈 커밋(`Keep scheduled deploys active`)을 남겨 60일 기한이 차지 않게 합니다.
+- 이 점검이 GitHub 사정으로 건너뛰어져 배포가 꺼졌다면 **Actions → Deploy to GitHub Pages → Enable workflow**를 누르면 됩니다.
 
 ## 방문자 분석 (Google Analytics·Microsoft Clarity)
 
